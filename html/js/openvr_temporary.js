@@ -1,8 +1,8 @@
 (function() {
 
     // Vars
-    var camera, 
-        scene, 
+    var camera,
+        scene,
         renderer,
 
         geometry,
@@ -42,7 +42,7 @@
         scene = new THREE.Scene();
 
         // Add some sweet lighting effects to the scene
-        light.position.set( 
+        light.position.set(
             SCENE.scene.light.position.x,
             SCENE.scene.light.position.y,
             SCENE.scene.light.position.z
@@ -51,7 +51,7 @@
         // Fog (optional)
         if ( SCENE.scene.fog )
             scene.fog = new THREE.Fog( 0xffffff, 0, 750 );
-        
+
         scene.add( light );
 
         // Init controls
@@ -85,23 +85,31 @@
         // Objects
         SCENE.objects.forEach( function( object ) {
 
-            if ( object.type !== "cube" ) {
-                alert( "Only cubes are allowed at the moment." );
+            if ( object.type !== "cube" && object.type !== "sphere" ) {
+                alert( "Only cubes & spheres are allowed at the moment." );
                 return;
             }
+            object.scale = object.scale ? parseInt(object.scale) : 20;
+            if ( object.type === "cube" ) {
+                geometry = new THREE.CubeGeometry( object.scale, object.scale, object.scale );
 
-            geometry = new THREE.CubeGeometry( 20, 20, 20 );
+                for ( var i = 0, l = geometry.faces.length; i < l; i ++ ) {
 
-            for ( var i = 0, l = geometry.faces.length; i < l; i ++ ) {
+                    var face = geometry.faces[ i ];
+                    face.vertexColors[ 0 ] = new THREE.Color().setHex( parseInt( "0x" + object.colors[ 0 ] ) );
+                    face.vertexColors[ 1 ] = new THREE.Color().setHex( parseInt( "0x" + object.colors[ 1 ] ) );
+                    face.vertexColors[ 2 ] = new THREE.Color().setHex( parseInt( "0x" + object.colors[ 2 ] ) );
+                    face.vertexColors[ 3 ] = new THREE.Color().setHex( parseInt( "0x" + object.colors[ 3 ] ) );
 
-                var face = geometry.faces[ i ];
-                face.vertexColors[ 0 ] = new THREE.Color().setHex( parseInt( "0x" + object.colors[ 0 ] ) );
-                face.vertexColors[ 1 ] = new THREE.Color().setHex( parseInt( "0x" + object.colors[ 1 ] ) );
-                face.vertexColors[ 2 ] = new THREE.Color().setHex( parseInt( "0x" + object.colors[ 2 ] ) );
-                face.vertexColors[ 3 ] = new THREE.Color().setHex( parseInt( "0x" + object.colors[ 3 ] ) );
+                    material = new THREE.MeshPhongMaterial( { specular: 0xffffff, shading: THREE.FlatShading,
+                        vertexColors: THREE.VertexColors } );
+                }
+            }
+            else if ( object.type === "sphere" ) {
+                geometry = new THREE.SphereGeometry( object.scale );
+                material = new THREE.MeshLambertMaterial( { color: parseInt("0x" + object.color ) } );
             }
 
-            material = new THREE.MeshPhongMaterial( { specular: 0xffffff, shading: THREE.FlatShading, vertexColors: THREE.VertexColors } );
 
             var mesh = new THREE.Mesh( geometry, material );
             mesh.position.x = object.position.x;
