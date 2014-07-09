@@ -87,28 +87,34 @@
 
             object.scale = object.scale ? parseInt(object.scale) : 20;
             console.log(object.scale);
-            if ( object.type === "cube" ) {
-                geometry = new THREE.CubeGeometry( object.scale, object.scale, object.scale );
+            switch (object.type) {
+                case "cube":
+                    geometry = new THREE.CubeGeometry( object.scale, object.scale, object.scale );
 
-                for ( var i = 0, l = geometry.faces.length; i < l; i ++ ) {
+                    for ( var i = 0, l = geometry.faces.length; i < l; i ++ ) {
 
-                    var face = geometry.faces[ i ];
-                    face.vertexColors[ 0 ] = new THREE.Color().setHex( parseInt( "0x" + object.colors[ 0 ] ) );
-                    face.vertexColors[ 1 ] = new THREE.Color().setHex( parseInt( "0x" + object.colors[ 1 ] ) );
-                    face.vertexColors[ 2 ] = new THREE.Color().setHex( parseInt( "0x" + object.colors[ 2 ] ) );
-                    face.vertexColors[ 3 ] = new THREE.Color().setHex( parseInt( "0x" + object.colors[ 3 ] ) );
+                        var face = geometry.faces[ i ];
+                        face.vertexColors[ 0 ] = new THREE.Color().setHex( parseInt( "0x" + object.colors[ 0 ] ) );
+                        face.vertexColors[ 1 ] = new THREE.Color().setHex( parseInt( "0x" + object.colors[ 1 ] ) );
+                        face.vertexColors[ 2 ] = new THREE.Color().setHex( parseInt( "0x" + object.colors[ 2 ] ) );
+                        face.vertexColors[ 3 ] = new THREE.Color().setHex( parseInt( "0x" + object.colors[ 3 ] ) );
 
-                    material = new THREE.MeshPhongMaterial( { specular: 0xffffff, shading: THREE.FlatShading,
-                        vertexColors: THREE.VertexColors } );
-                }
-            }
-            else if ( object.type === "sphere" ) {
-                geometry = new THREE.SphereGeometry( object.scale, 32 );
-                material = new THREE.MeshLambertMaterial( { color: parseInt("0x" + object.color ) } );
-            }
-            else if ( object.type === "cylinder") {
-                geometry = new THREE.CylinderGeometry( object.topr, object.botr, object.height, 20, 32 );
-                material = new THREE.MeshLambertMaterial( { color: parseInt("0x" + object.color ) } );
+                        material = new THREE.MeshPhongMaterial( { specular: 0xffffff, shading: THREE.FlatShading,
+                            vertexColors: THREE.VertexColors } );
+                    }
+                    break;
+                case "sphere":
+                    geometry = new THREE.SphereGeometry( object.scale, 32 );
+                    material = new THREE.MeshLambertMaterial( { color: parseInt("0x" + object.color ) } );
+                    break;
+                case "cylinder":
+                    geometry = new THREE.CylinderGeometry( object.topr, object.botr, object.height, 20, 32 );
+                    material = new THREE.MeshLambertMaterial( { color: parseInt("0x" + object.color ) } );
+                    break;
+                case "plane":
+                    geometry = new THREE.PlaneGeometry( object.width, object.height );
+                    material = new THREE.MeshBasicMaterial( { color: parseInt("0x" + object.color ) } );
+                    break;
             }
 
 
