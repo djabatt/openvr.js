@@ -117,6 +117,13 @@
                     break;
             }
 
+            if (object.rotx)
+                geometry.applyMatrix( new THREE.Matrix4().makeRotationX( toRad( parseInt(object.rotx) ) ) );
+            if (object.roty)
+                geometry.applyMatrix( new THREE.Matrix4().makeRotationY( toRad( parseInt(object.roty) ) ) );
+            if (object.rotz)
+                geometry.applyMatrix( new THREE.Matrix4().makeRotationZ( toRad( parseInt(object.rotz) ) ) )
+
 
             var mesh = new THREE.Mesh( geometry, material );
             mesh.position.x = object.position.x;
@@ -216,4 +223,8 @@
         console.log(event.target.files);
         fr.readAsText(event.target.files[0]);
     }, false);
+
+    function toRad( angle ) {
+        return angle * (Math.PI / 180);
+    }
 })();
