@@ -1,0 +1,77 @@
+{
+    "scene": {
+        "pixel_ratio": 1,
+        "alpha": false,
+        "light": {
+            "color": "ffffff",
+            "intensity": 1.5,
+            "position": {
+                "x": 1.5,
+                "y": 1.5,
+                "z": 1.5
+            }
+        },
+        "fog": false
+    },
+    "floor": {
+        "width": 2000,
+        "height": 2000,
+        "color": "f0ffff"
+    },
+    "objects": [
+        {
+            "type": "cube",
+            "scale": 30,
+            "position": {
+                "x": 0,
+                "y": 10,
+                "z": -50
+            },
+            "colors": [
+                "003366",
+                "0033ff",
+                "003366",
+                "ffffff"
+            ]
+        },
+        {
+            "type": "cube",
+            "position": {
+                "x": -50,
+                "y": 10,
+                "z": -50
+            },
+            "colors": [
+                "ffff00",
+                "aaaa00",
+                "ffff00",
+                "ffffff"
+            ]
+        },
+        {
+            "type": "cube",
+            "scale": 10,
+            "position": {
+                "x": 50,
+                "y": 10,
+                "z": -50
+            },
+            "colors": [
+                "990000",
+                "aa0000",
+                "990000",
+                "ffffff"
+            ]
+        },
+        {
+            "type": "sphere",
+            "position": {
+                "x": 0,
+                "y": 40,
+                "z": -50
+            },
+            "color": "bbbbbb",
+            "scale": 10
+        }
+    ]
+}

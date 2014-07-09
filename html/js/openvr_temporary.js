@@ -25,14 +25,14 @@
         }
 
         try {
-            init();
+            initObjects();
             animate();
         } catch ( e ) {
             console.log( e );
         }
     });
 
-    function init() {
+    function initObjects() {
         var light = new THREE.DirectionalLight( parseInt( "0x" + SCENE.scene.light.color ), SCENE.scene.light.intensity )
 
         // Init camera
@@ -90,6 +90,7 @@
                 return;
             }
             object.scale = object.scale ? parseInt(object.scale) : 20;
+            console.log(object.scale);
             if ( object.type === "cube" ) {
                 geometry = new THREE.CubeGeometry( object.scale, object.scale, object.scale );
 
@@ -197,4 +198,16 @@
 
         time = Date.now();
     }
+
+    vrObjFile = document.getElementById("vr-obj-file");
+    vrObjFile.addEventListener('change', function(event) {
+        var fr = new FileReader();
+        fr.onload = function(theFile) {
+            console.log(fr.result);
+            SCENE = JSON.parse(fr.result);
+            initObjects();
+        }
+        console.log(event.target.files);
+        fr.readAsText(event.target.files[0]);
+    }, false);
 })();
