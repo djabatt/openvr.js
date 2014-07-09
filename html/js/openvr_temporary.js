@@ -85,10 +85,6 @@
         // Objects
         SCENE.objects.forEach( function( object ) {
 
-            if ( object.type !== "cube" && object.type !== "sphere" ) {
-                alert( "Only cubes & spheres are allowed at the moment." );
-                return;
-            }
             object.scale = object.scale ? parseInt(object.scale) : 20;
             console.log(object.scale);
             if ( object.type === "cube" ) {
@@ -107,7 +103,11 @@
                 }
             }
             else if ( object.type === "sphere" ) {
-                geometry = new THREE.SphereGeometry( object.scale );
+                geometry = new THREE.SphereGeometry( object.scale, 32 );
+                material = new THREE.MeshLambertMaterial( { color: parseInt("0x" + object.color ) } );
+            }
+            else if ( object.type === "cylinder") {
+                geometry = new THREE.CylinderGeometry( object.topr, object.botr, object.height, 20, 32 );
                 material = new THREE.MeshLambertMaterial( { color: parseInt("0x" + object.color ) } );
             }
 

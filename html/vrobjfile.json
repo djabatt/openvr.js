@@ -72,6 +72,18 @@
             },
             "color": "bbbbbb",
             "scale": 10
+        },
+        {
+            "type": "cylinder",
+            "position": {
+                "x": 30,
+                "y": 40,
+                "z": -50
+            },
+            "color": "eeeeee",
+            "topr": 10,
+            "botr": 20,
+            "height": 10
         }
     ]
 }
