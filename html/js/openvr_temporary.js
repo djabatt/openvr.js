@@ -156,6 +156,26 @@
                     geometry = new THREE.RingGeometry( object.innerRadius, object.outerRadius, object.smoothness );
                     material = new THREE.MeshLambertMaterial( { color: parseInt( "0x" + object.color ) } );
                     break;
+                case "torus":
+                    object.radius = parseInt(object.radius || 10);
+                    object.thickness = parseInt(object.thickness || 3);
+                    object.circularSmooth = parseInt(object.circularSmooth || 10);
+                    object.tubeSmooth = parseInt(object.tubeSmooth || 10);
+                    geometry = new THREE.TorusGeometry( object.radius, object.thickness,
+                        object.circularSmooth, object.tubeSmooth);
+                    material = new THREE.MeshLambertMaterial( { color: parseInt( "0x" + object.color ) } );
+                    break;
+                case "torusknot":
+                    object.radius = parseInt(object.radius || 10);
+                    object.tube = parseInt(object.tube || 5);
+                    object.circularSmooth = parseInt(object.circularSmooth || 10);
+                    object.tubeSmooth = parseInt(object.tubeSmooth || 10);
+                    object.p = parseInt(object.p || 2);
+                    object.q = parseInt(object.q || 3);
+                    geometry = new THREE.TorusKnotGeometry( object.radius, object.tube,
+                            object.circularSmooth, object.tubeSmooth, object.p, object.q);
+                    material = new THREE.MeshLambertMaterial( { color: parseInt( "0x" + object.color ) } );
+                    break;
                 case "text":
                     parameters = {};
                     object.text = object.text || "OpenVR!";
