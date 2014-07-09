@@ -119,6 +119,28 @@
             "y": 10,
             "z": -20
           }
+        },
+        {
+          "type": "torus",
+          "radius": 7,
+          "position": {
+            "x": -20,
+            "y": 20,
+            "z": -30
+          }
+        },
+        {
+          "type": "torusknot",
+          "radius": 10,
+          "tube": 1,
+          "p": 3,
+          "q": -7,
+          "position": {
+            "x": 55,
+            "y": 40,
+            "z": -40
+          },
+          "color": "ababab"
         }
     ]
 }
