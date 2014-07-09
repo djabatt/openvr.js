@@ -84,9 +84,21 @@
 
         // Objects
         SCENE.objects.forEach( function( object ) {
-
+            // Default values
             object.scale = object.scale ? parseInt(object.scale) : 20;
-            console.log(object.scale);
+            object.color = object.color || "ffffff"
+            object.colors = object.colors || [];
+            if (object.colors.length < 3) {
+                for (var i = 0; i < 3; i ++) {
+                    object.colors[ i ] = object.colors[ i ] || parseInt("ffffff");
+                }
+            }
+            if (!object.position)
+                object.position = {};
+            object.position.x = object.position.x || 0;
+            object.position.y = object.position.y || 0;
+            object.position.z = object.position.z || 0;
+
             switch (object.type) {
                 case "cube":
                     geometry = new THREE.CubeGeometry( object.scale, object.scale, object.scale );
@@ -115,6 +127,28 @@
                     geometry = new THREE.PlaneGeometry( object.width, object.height );
                     material = new THREE.MeshBasicMaterial( { color: parseInt("0x" + object.color ) } );
                     break;
+                case "tetrahedron":
+                    object.radius = parseInt(object.radius || 10);
+                    object.detail = parseFloat(object.detail || 0);
+                    geometry = new THREE.TetrahedronGeometry( object.radius, object.detail );
+                    material = new THREE.MeshLambertMaterial( { color: parseInt("0x" + object.color ) } );
+                    break;
+                case "ring":
+                    object.innerRadius = parseInt( object.innerRadius || 5 );
+                    object.outerRadius = parseInt( object.outerRadius || 10 );
+                    object.smoothness = parseInt( object.smoothness || 8 );
+                    geometry = new THREE.RingGeometry( object.innerRadius, object.outerRadius, object.smoothness );
+                    material = new THREE.MeshLambertMaterial( { color: parseInt( "0x" + object.color ) } );
+                    break;
+                case "text":
+                    parameters = {};
+                    object.text = object.text || "OpenVR!";
+                    parameters.size = parseFloat(object.size || 20);
+                    parameters.height = parseFloat(object.height || 50);
+                    parameters.weight = object.weight || "normal";
+                    geometry = new THREE.TextGeometry(object.text, parameters);
+                    break;
+
             }
 
             if (object.rotx)

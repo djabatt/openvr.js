@@ -21,7 +21,7 @@
     "objects": [
         {
             "type": "cube",
-            "scale": 30,
+            "scale": 10,
             "position": {
                 "x": 0,
                 "y": 10,
@@ -36,9 +36,10 @@
         },
         {
             "type": "cube",
+            "scale": 10,
             "position": {
-                "x": -50,
-                "y": 10,
+                "x": -25,
+                "y": 5,
                 "z": -50
             },
             "colors": [
@@ -52,8 +53,8 @@
             "type": "cube",
             "scale": 10,
             "position": {
-                "x": 50,
-                "y": 10,
+                "x": 25,
+                "y": 5,
                 "z": -50
             },
             "colors": [
@@ -68,23 +69,56 @@
             "type": "sphere",
             "position": {
                 "x": 0,
-                "y": 40,
+                "y": 15,
                 "z": -50
             },
             "color": "bbbbbb",
-            "scale": 10
+            "scale": 5
         },
         {
             "type": "cylinder",
             "position": {
-                "x": 30,
-                "y": 40,
+                "x": 15,
+                "y": 20,
                 "z": -50
             },
             "color": "eeeeee",
-            "topr": 10,
-            "botr": 20,
+            "topr": 5,
+            "botr": 10,
             "height": 10
+        },
+        {
+          "type": "text",
+          "text": "DopenVR!",
+          "position": {
+            "x": -15,
+            "y": 25,
+            "z": -50
+          },
+          "size": 10.0,
+          "height": 10.0,
+          "weight": "bold"
+        },
+        {
+          "type": "tetrahedron",
+          "radius": 5,
+          "position": {
+            "x": -20,
+            "y": 5,
+            "z": -20
+          },
+          "detail": 0.3
+        },
+        {
+          "type": "ring",
+          "innerRadius": 3,
+          "outerRadius": 6,
+          "smoothness": 10,
+          "position": {
+            "x": 20,
+            "y": 10,
+            "z": -20
+          }
         }
     ]
 }
