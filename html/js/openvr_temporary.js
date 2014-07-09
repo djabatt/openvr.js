@@ -16,7 +16,17 @@
         objects = [],
         ray,
 
-        vrstate = new vr.State();
+        vrstate = new vr.State(),
+
+        defaultLightParams = {
+            color: "ffffff",
+            intensity: 1.5,
+            position: {
+                x: 1.5,
+                y: 1.5,
+                z: 1.5
+            }
+        };
 
     // Initialize VR.js
     vr.load( function( error ) {
@@ -24,17 +34,21 @@
             alert('Plugin load failed: ' + error.toString());
         }
 
-        try {
-            initObjects();
-            animate();
-        } catch ( e ) {
-            console.log( e );
-        }
+        initObjects();
+        animate();
     });
 
-    function initObjects() {
-        var light = new THREE.DirectionalLight( parseInt( "0x" + SCENE.scene.light.color ), SCENE.scene.light.intensity )
+    function lightSource( params ) {
+        var light = new THREE.DirectionalLight( parseInt( "0x" + params.color ), params.intensity )
+        light.position.set(
+            params.position.x,
+            params.position.y,
+            params.position.z
+        );
+        return light;
+    }
 
+    function initObjects() {
         // Init camera
         camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
 
@@ -42,17 +56,19 @@
         scene = new THREE.Scene();
 
         // Add some sweet lighting effects to the scene
-        light.position.set(
-            SCENE.scene.light.position.x,
-            SCENE.scene.light.position.y,
-            SCENE.scene.light.position.z
-        );
+        if ( SCENE.light && SCENE.light.length >= 1 ) {
+            SCENE.light.forEach( function( lightParams ) {
+                var light = lightSource( lightParams );
+                scene.add( light );
+            });
+        }
+        else {
+            scene.add( lightSource( defaultLightParams ) );
+        }
 
         // Fog (optional)
         if ( SCENE.scene.fog )
             scene.fog = new THREE.Fog( 0xffffff, 0, 750 );
-
-        scene.add( light );
 
         // Init controls
         controls = new THREE.OculusRiftControls( camera );
