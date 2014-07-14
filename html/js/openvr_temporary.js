@@ -14,6 +14,7 @@
 
         effect, // rift effect
         objects = [],
+        movingObjects = [],
         ray,
 
         vrstate = new vr.State(),
@@ -27,6 +28,12 @@
                 z: 1.5
             }
         };
+
+    // Helper function
+
+    function toRad( angle ) {
+        return angle * (Math.PI / 180);
+    }
 
     // Initialize VR.js
     vr.load( function( error ) {
@@ -49,6 +56,8 @@
     }
 
     function initObjects() {
+        // Clear objects and moving objects list
+        objects = [];
         // Init camera
         camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
 
@@ -71,7 +80,8 @@
             scene.fog = new THREE.Fog( 0xffffff, 0, 750 );
 
         // Init controls
-        controls = new THREE.OculusRiftControls( camera );
+        // controls = new THREE.OculusRiftControls( camera );
+        controls = new THREE.PointerLockControls( camera );
         scene.add( controls.getObject() );
 
         // Light ray caster
@@ -194,12 +204,20 @@
             if (object.rotz)
                 geometry.applyMatrix( new THREE.Matrix4().makeRotationZ( toRad( parseInt(object.rotz) ) ) )
 
-
             var mesh = new THREE.Mesh( geometry, material );
             mesh.position.x = object.position.x;
             mesh.position.y = object.position.y;
             mesh.position.z = object.position.z;
             scene.add( mesh );
+
+            // Check if animation commands exist
+            if ( object.spins || object.orbits ) {
+                if (object.spins)
+                    mesh.spins = object.spins;
+                if (object.orbits)
+                    mesh.orbits = object.orbits;
+                movingObjects.push(mesh);
+            }
 
             material.color.setHSL( Math.random() * 0.2 + 0.5, 0.75, Math.random() * 0.25 + 0.75 );
 
@@ -225,6 +243,29 @@
         window.addEventListener( 'resize', onWindowResize, false );
         document.addEventListener( 'keydown', keyPressed, false );
     }
+
+    // function makeMotionMatrix( object ) {
+    //     var totalMatrix = new THREE.Matrix4().identity();
+    //     var tempMatrix = new THREE.Matrix4().identity();
+    //     if ( object.spins ) {
+    //         if (object.spins.x)
+    //             totalMatrix.multiply( tempMatrix.makeRotationX( toRad(parseInt(object.spins.x)) ) );
+    //         if (object.spins.y)
+    //             totalMatrix.multiply( tempMatrix.makeRotationY( toRad(parseInt(object.spins.y)) ) );
+    //         if (object.spins.z)
+    //             totalMatrix.multiply( tempMatrix.makeRotationZ( toRad(parseInt(object.spins.z)) ) );
+    //     }
+    //     if ( object.orbits ) {
+    //         totalMatrix.multiply( tempMatrix.makeTranslationX( parseInt(object.orbits.radius) ) );
+    //         if ( object.orbits.x )
+    //             totalMatrix.multiply( tempMatrix.makeRotationX( toRad( parseInt(object.orbits.x) ) ) );
+    //         if ( object.orbits.y )
+    //             totalMatrix.multiply( tempMatrix.makeRotationY( toRad( parseInt(object.orbits.y) ) ) );
+    //         if ( object.orbits.z )
+    //             totalMatrix.multiply( tempMatrix.makeRotationZ( toRad( parseInt(object.orbits.z) ) ) );
+    //     }
+    //     return totalMatrix;
+    // }
 
     function onWindowResize() {
     }
@@ -260,6 +301,7 @@
         vr.requestAnimationFrame(animate);
 
         controls.isOnObject( false );
+        controls.update();
 
         ray.ray.origin.copy( controls.getObject().position );
         ray.ray.origin.y -= 10;
@@ -272,10 +314,17 @@
             }
         }
 
+        // Object motion will be included here
+        for ( var i = 0; i < movingObjects.length; i ++) {
+            movingObjects[i].rotation.x += toRad( movingObjects[i].spins.x || 0 );
+            movingObjects[i].rotation.y += toRad( movingObjects[i].spins.y || 0 );
+            movingObjects[i].rotation.z += toRad( movingObjects[i].spins.z || 0 );
+        }
         // Poll VR, if it's ready.
-        var polled = vr.pollState(vrstate);
-        controls.update( Date.now() - time, polled ? vrstate : null );
+         var polled = vr.pollState(vrstate);
+        // controls.update( Date.now() - time, polled ? vrstate : null );
 
+        controls.update();
         //renderer.render( scene, camera );
         effect.render( scene, camera, polled ? vrstate : null );
 
@@ -286,15 +335,9 @@
     vrObjFile.addEventListener('change', function(event) {
         var fr = new FileReader();
         fr.onload = function(theFile) {
-            console.log(fr.result);
             SCENE = JSON.parse(fr.result);
             initObjects();
         }
-        console.log(event.target.files);
         fr.readAsText(event.target.files[0]);
     }, false);
-
-    function toRad( angle ) {
-        return angle * (Math.PI / 180);
-    }
 })();

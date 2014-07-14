@@ -127,6 +127,9 @@
             "x": -20,
             "y": 20,
             "z": -30
+          },
+          "spins": {
+            "x": 2
           }
         },
         {
@@ -135,12 +138,16 @@
           "tube": 1,
           "p": 3,
           "q": -7,
+          "circularSmooth": 100,
           "position": {
             "x": 55,
             "y": 40,
             "z": -40
           },
-          "color": "ababab"
+          "color": "ababab",
+          "spins": {
+            "z": 4
+          }
         }
     ]
 }
