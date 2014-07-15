@@ -281,6 +281,8 @@
             objects.push( mesh );
         });
 
+        var exporter = new THREE.SceneExporter();
+        console.log(JSON.stringify(exporter.parse(scene)));
 
         // Render
 

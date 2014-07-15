@@ -1,0 +1,492 @@
+{
+    "metadata": {
+        "formatVersion": 3.2,
+        "type": "scene",
+        "generatedBy": "SceneExporter",
+        "objects": 16,
+        "geometries": 11,
+        "materials": 10,
+        "textures": 0
+    },
+    "urlBaseType": "relativeToScene",
+    "objects": {
+        "Object_17": {
+            "type": "DirectionalLight",
+            "color": 16777215,
+            "intensity": 1.5,
+            "direction": [
+                1.5,
+                1.5,
+                1.5
+            ],
+            "target": "Object_18"
+        },
+        "Object_18": {
+            "position": [
+                0,
+                0,
+                0
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "visible": true
+        },
+        "Object_20": {
+            "position": [
+                0,
+                10,
+                0
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "visible": true,
+            "children": {
+                "Object_19": {
+                    "position": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "rotation": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "visible": true,
+                    "children": {
+                        "Object_15": {
+                            "type": "PerspectiveCamera",
+                            "fov": 75,
+                            "aspect": 6.4774774774774775,
+                            "near": 1,
+                            "far": 1000,
+                            "position": [
+                                0,
+                                0,
+                                0
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "Object_21": {
+            "geometry": "Geometry_5",
+            "material": "Material_24",
+            "position": [
+                0,
+                0,
+                0
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "visible": true
+        },
+        "Object_22": {
+            "geometry": "Geometry_6",
+            "material": "Material_30",
+            "position": [
+                0,
+                10,
+                -50
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "visible": true
+        },
+        "Object_23": {
+            "geometry": "Geometry_7",
+            "material": "Material_36",
+            "position": [
+                -25,
+                5,
+                -50
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "visible": true
+        },
+        "Object_24": {
+            "geometry": "Geometry_8",
+            "material": "Material_42",
+            "position": [
+                25,
+                5,
+                -50
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "visible": true
+        },
+        "Object_25": {
+            "geometry": "Geometry_9",
+            "material": "Material_43",
+            "position": [
+                0,
+                15,
+                -50
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "visible": true
+        },
+        "Object_26": {
+            "geometry": "Geometry_10",
+            "material": "Material_44",
+            "position": [
+                15,
+                20,
+                -50
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "visible": true
+        },
+        "Object_27": {
+            "geometry": "Geometry_11",
+            "material": "Material_44",
+            "position": [
+                -15,
+                25,
+                -50
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "visible": true
+        },
+        "Object_28": {
+            "geometry": "Geometry_12",
+            "material": "Material_45",
+            "position": [
+                -20,
+                5,
+                -20
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "visible": true
+        },
+        "Object_29": {
+            "geometry": "Geometry_13",
+            "material": "Material_46",
+            "position": [
+                20,
+                10,
+                -20
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "visible": true
+        },
+        "Object_30": {
+            "geometry": "Geometry_14",
+            "material": "Material_47",
+            "position": [
+                -20,
+                20,
+                -30
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "visible": true
+        },
+        "Object_31": {
+            "geometry": "Geometry_15",
+            "material": "Material_48",
+            "position": [
+                55,
+                40,
+                -40
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "visible": true
+        }
+    },
+    "geometries": {
+        "Geometry_5": {
+            "type": "plane",
+            "width": 2000,
+            "height": 2000,
+            "widthSegments": 1,
+            "heightSegments": 1
+        },
+        "Geometry_9": {
+            "type": "sphere",
+            "radius": 5,
+            "widthSegments": 32,
+            "heightSegments": 6
+        }
+    },
+    "materials": {
+        "Material_24": {
+            "type": "MeshBasicMaterial",
+            "parameters": {
+                "color": 16777215,
+                "reflectivity": 1,
+                "transparent": false,
+                "opacity": 1,
+                "wireframe": false,
+                "wireframeLinewidth": 1
+            }
+        },
+        "Material_30": {
+            "type": "MeshPhongMaterial",
+            "parameters": {
+                "color": 13495287,
+                "ambient": 16777215,
+                "emissive": 0,
+                "specular": 16777215,
+                "shininess": 30,
+                "bumpScale": 1,
+                "reflectivity": 1,
+                "transparent": false,
+                "opacity": 1,
+                "wireframe": false,
+                "wireframeLinewidth": 1
+            }
+        },
+        "Material_36": {
+            "type": "MeshPhongMaterial",
+            "parameters": {
+                "color": 13169399,
+                "ambient": 16777215,
+                "emissive": 0,
+                "specular": 16777215,
+                "shininess": 30,
+                "bumpScale": 1,
+                "reflectivity": 1,
+                "transparent": false,
+                "opacity": 1,
+                "wireframe": false,
+                "wireframeLinewidth": 1
+            }
+        },
+        "Material_42": {
+            "type": "MeshPhongMaterial",
+            "parameters": {
+                "color": 10801394,
+                "ambient": 16777215,
+                "emissive": 0,
+                "specular": 16777215,
+                "shininess": 30,
+                "bumpScale": 1,
+                "reflectivity": 1,
+                "transparent": false,
+                "opacity": 1,
+                "wireframe": false,
+                "wireframeLinewidth": 1
+            }
+        },
+        "Material_43": {
+            "type": "MeshLambertMaterial",
+            "parameters": {
+                "color": 10408433,
+                "ambient": 16777215,
+                "emissive": 0,
+                "reflectivity": 1,
+                "transparent": false,
+                "opacity": 1,
+                "wireframe": false,
+                "wireframeLinewidth": 1
+            }
+        },
+        "Material_44": {
+            "type": "MeshLambertMaterial",
+            "parameters": {
+                "color": 14080249,
+                "ambient": 16777215,
+                "emissive": 0,
+                "reflectivity": 1,
+                "transparent": false,
+                "opacity": 1,
+                "wireframe": false,
+                "wireframeLinewidth": 1
+            }
+        },
+        "Material_45": {
+            "type": "MeshLambertMaterial",
+            "parameters": {
+                "color": 14149881,
+                "ambient": 16777215,
+                "emissive": 0,
+                "reflectivity": 1,
+                "transparent": false,
+                "opacity": 1,
+                "wireframe": false,
+                "wireframeLinewidth": 1
+            }
+        },
+        "Material_46": {
+            "type": "MeshLambertMaterial",
+            "parameters": {
+                "color": 13157110,
+                "ambient": 16777215,
+                "emissive": 0,
+                "reflectivity": 1,
+                "transparent": false,
+                "opacity": 1,
+                "wireframe": false,
+                "wireframeLinewidth": 1
+            }
+        },
+        "Material_47": {
+            "type": "MeshLambertMaterial",
+            "parameters": {
+                "color": 14543610,
+                "ambient": 16777215,
+                "emissive": 0,
+                "reflectivity": 1,
+                "transparent": false,
+                "opacity": 1,
+                "wireframe": false,
+                "wireframeLinewidth": 1
+            }
+        },
+        "Material_48": {
+            "type": "MeshLambertMaterial",
+            "parameters": {
+                "color": 11907828,
+                "ambient": 16777215,
+                "emissive": 0,
+                "reflectivity": 1,
+                "transparent": false,
+                "opacity": 1,
+                "wireframe": false,
+                "wireframeLinewidth": 1
+            }
+        }
+    },
+    "textures": {},
+    "fogs": {},
+    "transform": {
+        "position": [
+            0,
+            0,
+            0
+        ],
+        "rotation": [
+            0,
+            0,
+            0
+        ],
+        "scale": [
+            1,
+            1,
+            1
+        ]
+    },
+    "defaults": {
+        "camera": "",
+        "fog": ""
+    }
+}
