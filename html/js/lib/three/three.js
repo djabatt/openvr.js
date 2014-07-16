@@ -32391,7 +32391,7 @@ THREE.TextGeometry = function ( text, parameters ) {
 	var textShapes = THREE.FontUtils.generateShapes( text, parameters );
 
 	// translate parameters to ExtrudeGeometry API
-
+	this.text = text;
 	parameters.amount = parameters.height !== undefined ? parameters.height : 50;
 
 	// defaults
