@@ -1,0 +1,201 @@
+{
+    "metadata": {
+        "formatVersion": 3.2,
+        "type": "scene",
+        "generatedBy": "SceneExporter",
+        "objects": 5,
+        "geometries": 2,
+        "materials": 2
+    },
+    "urlBaseType": "relativeToScene",
+    "objects": {
+        "Object_0": {
+            "geometry": "Geometry_0",
+            "material": "Material_0",
+            "position": [
+                "10",
+                "20",
+                "-50"
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "visible": true
+        },
+        "Object_1": {
+            "geometry": "Geometry_1",
+            "material": "Material_1",
+            "position": [
+                "-10",
+                "20",
+                "-50"
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "visible": true
+        },
+        "Object_2": {
+            "type": "DirectionalLight",
+            "color": 16777215,
+            "intensity": 1,
+            "direction": [
+                "0",
+                "0",
+                "0"
+            ],
+            "target": "Object_3"
+        },
+        "Object_3": {
+            "position": [
+                0,
+                0,
+                0
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "visible": true
+        },
+        "Object_4": {
+            "position": [
+                0,
+                10,
+                0
+            ],
+            "rotation": [
+                0,
+                0,
+                0
+            ],
+            "scale": [
+                1,
+                1,
+                1
+            ],
+            "visible": true,
+            "children": {
+                "Object_31": {
+                    "position": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "rotation": [
+                        0,
+                        0,
+                        0
+                    ],
+                    "scale": [
+                        1,
+                        1,
+                        1
+                    ],
+                    "visible": true,
+                    "children": {
+                        "Object_27": {
+                            "type": "PerspectiveCamera",
+                            "fov": 75,
+                            "aspect": 1.8459563543003852,
+                            "near": 1,
+                            "far": 1000,
+                            "position": [
+                                0,
+                                0,
+                                0
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "geometries": {
+        "Geometry_0": {
+            "type": "cube",
+            "width": "20",
+            "height": "30",
+            "depth": "-50",
+            "widthSegments": 1,
+            "heightSegments": 1,
+            "depthSegments": 1
+        },
+        "Geometry_1": {
+            "type": "cube",
+            "width": "10",
+            "height": 10,
+            "depth": "20",
+            "widthSegments": 1,
+            "heightSegments": 1,
+            "depthSegments": 1
+        }
+    },
+    "materials": {
+        "Material_0": {
+            "type": "MeshBasicMaterial",
+            "parameters": {
+                "color": 11182080,
+                "relectivity": 1,
+                "transparent": false,
+                "opacity": 1,
+                "wireframe": false,
+                "wireframeLineWidth": 1
+            }
+        },
+        "Material_1": {
+            "type": "MeshBasicMaterial",
+            "parameters": {
+                "color": 15597279,
+                "relectivity": 1,
+                "transparent": false,
+                "opacity": 1,
+                "wireframe": false,
+                "wireframeLineWidth": 1
+            }
+        }
+    },
+    "textures": {},
+    "fogs": {},
+    "transform": {
+        "position": [
+            0,
+            0,
+            0
+        ],
+        "rotiation": [
+            0,
+            0,
+            0
+        ],
+        "scale": [
+            1,
+            1,
+            1
+        ]
+    },
+    "defaults": {
+        "camera": "",
+        "fog": ""
+    }
+}

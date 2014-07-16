@@ -123,7 +123,7 @@ var CssObjectLoader = (function () {
 
     var lightObj = {
       type: "DirectionalLight",
-      color: (object.color || "#ffffff").replace("#", "0x"),
+      color: parseInt((object.color || "#ffffff").replace("#", "0x")),
       intensity: object.intensity || 1,
       direction: [
         object.x || 1,
@@ -156,7 +156,7 @@ var CssObjectLoader = (function () {
     var matObj = {
         type: "MeshBasicMaterial",
         parameters: {
-            color: (curObj.color || "#ffffff").replace("#", "0x"),
+            color: parseInt((curObj.color || "#ffffff").replace("#", "0x")),
             relectivity: 1,
             transparent: false,
             opacity: 1,
