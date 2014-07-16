@@ -30994,6 +30994,20 @@ THREE.CylinderGeometry = function ( radiusTop, radiusBottom, height, radiusSegme
 	var segmentsX = radiusSegments || 8;
 	var segmentsY = heightSegments || 1;
 
+	this.parameters = {
+		radiusTop: radiusTop,
+		radiusBottom: radiusBottom,
+		height: height,
+		radiusSegments: radiusSegments,
+		heightSegments: heightSegments,
+		openEnded: openEnded
+	};
+
+	this.radiusBottom = radiusBottom;
+	this.height = height;
+	this.radiusSegments = radiusSegments;
+	this.heightSegments = heightSegments;
+
 	var x, y, vertices = [], uvs = [];
 
 	for ( y = 0; y <= segmentsY; y ++ ) {
@@ -32174,6 +32188,15 @@ THREE.RingGeometry = function ( innerRadius, outerRadius, thetaSegments, phiSegm
 	thetaSegments = thetaSegments !== undefined ? Math.max( 3, thetaSegments ) : 8;
 	phiSegments = phiSegments !== undefined ? Math.max( 3, phiSegments ) : 8;
 
+	this.parameters = {
+		innerRadius: innerRadius,
+		outerRadius: outerRadius,
+		thetaStart: thetaStart,
+		thetaLength: thetaLength,
+		thetaSegments: thetaSegments,
+		phiSegments: phiSegments
+	}
+
 	var i, o, uvs = [], radius = innerRadius, radiusStep = ( ( outerRadius - innerRadius ) / phiSegments );
 
 	for ( i = 0; i <= phiSegments; i ++ ) { // concentric circles inside ring
@@ -32376,6 +32399,8 @@ THREE.TextGeometry = function ( text, parameters ) {
 	if ( parameters.bevelThickness === undefined ) parameters.bevelThickness = 10;
 	if ( parameters.bevelSize === undefined ) parameters.bevelSize = 8;
 	if ( parameters.bevelEnabled === undefined ) parameters.bevelEnabled = false;
+
+	this.parameters = parameters;
 
 	THREE.ExtrudeGeometry.call( this, textShapes, parameters );
 
@@ -33038,6 +33063,11 @@ THREE.OctahedronGeometry.prototype = Object.create( THREE.Geometry.prototype );
  */
 
 THREE.TetrahedronGeometry = function ( radius, detail ) {
+
+	this.parameters = {
+		radius: radius,
+		detail: detail
+	}
 
 	var vertices = [
 		[ 1,  1,  1 ], [ -1, -1, 1 ], [ -1, 1, -1 ], [ 1, -1, -1 ]

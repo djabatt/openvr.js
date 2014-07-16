@@ -848,13 +848,19 @@ THREE.SceneLoader.prototype = {
 
 			} else if ( geoJSON.type === "cylinder" ) {
 
-				geometry = new THREE.CylinderGeometry( geoJSON.topRad, geoJSON.botRad, geoJSON.height, geoJSON.radSegs, geoJSON.heightSegs );
+				geometry = new THREE.CylinderGeometry( geoJSON.radiusTop, geoJSON.radiusBottom, geoJSON.height, geoJSON.radiusSegments, geoJSON.heightSegments, geoJSON.openEnded );
 				geometry.name = geoID;
 				result.geometries[ geoID ] = geometry;
 
 			} else if ( geoJSON.type === "torus" ) {
 
-				geometry = new THREE.TorusGeometry( geoJSON.radius, geoJSON.tube, geoJSON.segmentsR, geoJSON.segmentsT );
+				geometry = new THREE.TorusGeometry( geoJSON.radius, geoJSON.tube, geoJSON.radialSegments, geoJSON.tubularSegments, geoJSON.arc );
+				geometry.name = geoID;
+				result.geometries[ geoID ] = geometry;
+
+			} else if ( geoJSON.type === "torusknot" ) {
+
+				geometry = new THREE.TorusKnotGeometry( geoJSON.radius, geoJSON.tube, geoJSON.radialSegments, geoJSON.tubularSegments, geoJSON.p, geoJSON.q, geoJSON.heightScale );
 				geometry.name = geoID;
 				result.geometries[ geoID ] = geometry;
 

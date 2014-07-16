@@ -408,6 +408,98 @@ THREE.SceneExporter.prototype = {
 
 				];
 
+			} else if ( g instanceof THREE.CylinderGeometry ) {
+
+				var output = [
+
+				'\t' + LabelString( getGeometryName( g ) ) + ': {',
+				' "type"    : "cylinder",',
+				' "radiusTop"  : ' + g.parameters.radiusTop + ',',
+				' "radiusBottom"  : ' + g.parameters.radiusBottom + ',',
+				' "height"  : ' + g.parameters.height + ',',
+				' "radiusSegments"  : ' + g.parameters.radiusSegments + ',',
+				' "heightSegments"  : ' + g.parameters.heightSegments + ',',
+				' "openEnded"  : ' + ( g.parameters.openEnded || 0 ),
+				'}'
+
+				];
+
+			} else if ( g instanceof THREE.TetrahedronGeometry ) {
+
+				var output = [
+
+				'\t' + LabelString( getGeometryName( g ) ) + ': {',
+				' "type"    : "tetrahedron",',
+				' "radius"  : ' + g.parameters.radius + ',',
+				' "detail"  : ' + g.parameters.detail,
+				'}'
+
+				];
+
+			} else if ( g instanceof THREE.RingGeometry ) {
+
+				var output = [
+
+				'\t' + LabelString( getGeometryName( g ) ) + ': {',
+				' "type"    : "ring",',
+				' "innerRadius"  : ' + g.parameters.innerRadius + ',',
+				' "outerRadius"  : ' + g.parameters.outerRadius + ',',
+				' "thetaSegments"  : ' + g.parameters.thetaSegments + ',',
+				' "phiSegments"  : ' + g.parameters.phiSegments + ',',
+				' "thetaStart"  : ' + g.parameters.thetaStart + ',',
+				' "thetaLength"  : ' + g.parameters.thetaLength,
+				'}'
+
+				];
+
+			} else if ( g instanceof THREE.TorusGeometry ) {
+
+				var output = [
+
+				'\t' + LabelString( getGeometryName( g ) ) + ': {',
+				' "type"    : "torus",',
+				' "radius"  : ' + g.radius + ',',
+				' "tube"  : ' + g.tube + ',',
+				' "radialSegments"  : ' + g.radialSegments + ',',
+				' "tubularSegments"  : ' + g.tubularSegments + ',',
+				' "arc"  : ' + g.arc,
+				'}'
+
+				];
+
+			} else if ( g instanceof THREE.TorusKnotGeometry ) {
+
+				var output = [
+
+				'\t' + LabelString( getGeometryName( g ) ) + ': {',
+				' "type"    : "torusknot",',
+				' "radius"  : ' + g.radius + ',',
+				' "tube"  : ' + g.tube + ',',
+				' "radialSegments"  : ' + g.radialSegments + ',',
+				' "tubularSegments"  : ' + g.tubularSegments + ',',
+				' "p"  : ' + g.p + ',',
+				' "q"  : ' + g.q + ',',
+				' "heightScale"  : ' + g.heightScale,
+				'}'
+
+				];
+
+			} else if ( g instanceof THREE.TextGeometry ) {
+
+				var output = [
+
+				'\t' + LabelString( getGeometryName( g ) ) + ': {',
+				' "type"    : "text",',
+				' "parameters"  : {',
+					' "height"  : ' + g.parameters.height + ',',
+					' "bevelThickness"  : ' + g.parameters.bevelThickness + ',',
+					' "bevelSize"  : ' + g.parameters.bevelSize + ',',
+					' "bevelEnabled"  : ' + g.parameters.bevelEnabled,
+					'}',
+				'}'
+
+				];
+
 			} else if ( g instanceof THREE.Geometry ) {
 
 				if ( g.sourceType === "ascii" || g.sourceType === "ctm" || g.sourceType === "stl" || g.sourceType === "vtk" ) {
