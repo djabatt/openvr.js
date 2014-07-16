@@ -33,69 +33,8 @@
     // CSS Parsing -> Importable JSON
     // Work in Progress, just toy code to get things going
     // TODO: refactor and move to its own file
-    var cssGeometries = {},
-        cssMaterials = {},
-        cssObjects = {};
-    $("#ovr-style").parsecss(function( result ) {
-        var uniqueInd = 0;
-        for ( objID in result ) {
-            var geoObj = {}, matObj, objObj;
-            curObj = result[ objID ];
-            if ( objID.split('#')[0] == "cube" ) {
-                geoObj = {
-                    type: "cube",
-                    width: curObj.width || 10,
-                    height: curObj.height || 10,
-                    depth: curObj.depth || 10,
-                    widthSegments: curObj.widthSegments || 1,
-                    heightSegments: curObj.heightSegments || 1,
-                    depthSegments: curObj.depthSegments || 1,
-                    visible: true
-                };
-                matObj = {
-                    type: "MeshBasicMaterial",
-                    parameters: {
-                        color: curObj.color.replace("#", ""),
-                        relectivity: 1,
-                        transparent: false,
-                        opacity: 1,
-                        wireframe: false,
-                        wireframeLineWidth: 1
-                    }
-                };
-                objObj = {
-                    geometry: "Geometry_" + uniqueInd,
-                    material: "Material_" + uniqueInd,
-                    position: [
-                        curObj.x || 0,
-                        curObj.y || 0,
-                        curObj.z || 0
-                    ],
-                    rotation: [
-                        0,
-                        0,
-                        0
-                    ],
-                    scale: [
-                        1,
-                        1,
-                        1
-                    ],
-                    visible: true
-                };
-            }
-            cssGeometries[ "Geometry_" + uniqueInd ] = geoObj;
-            cssMaterials[ "Material_" + uniqueInd ] = matObj;
-            cssObjects[ "Object_" + uniqueInd ] = objObj;
-            uniqueInd++;
-        }
-        var importObject = {
-            objects: cssObjects,
-            geometries: cssGeometries,
-            materials: cssMaterials
-        }
-        console.log( JSON.stringify(importObject) );
-    });
+    var cssImportObject = CssObjectLoader.loadCss();
+    console.log(JSON.stringify(cssImportObject));
 
     // Helper function
 
@@ -344,13 +283,13 @@
             objects.push( mesh );
         });
 
-        var exporter = new THREE.SceneExporter();
-        var sceneJson = JSON.stringify(exporter.parse(scene));
-        localStorage.setItem('scene', sceneJson);
+        // var exporter = new THREE.SceneExporter();
+        // var sceneJson = JSON.stringify(exporter.parse(scene));
+        // localStorage.setItem('scene', sceneJson);
 
         var loader = new THREE.SceneLoader();
-        var jScene = JSON.parse(localStorage.getItem('scene'));
-        loader.parse(jScene, function( e ) {
+        // var jScene = JSON.parse(localStorage.getItem('scene'));
+        loader.parse(cssImportObject, function( e ) {
             scene = e.scene;
         }, '.');
 
