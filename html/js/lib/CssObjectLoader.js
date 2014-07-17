@@ -99,7 +99,6 @@ var CssObjectLoader = (function () {
         uniqueInd++;
       }
 
-      cssObjects[ "Object_" + uniqueInd ] = cameraObj;
     });
     var retObj = {
       objects: cssObjects,
@@ -113,32 +112,6 @@ var CssObjectLoader = (function () {
   // Object models for all the types of objects in a Scene
   // TODO: Make each less static
   // TODO: allow for more material options, etc
-
-  // TODO: allow for custom camera
-  var cameraObj = {
-    "position": [ 0, 10, 0 ],
-    "rotation": [ 0, 0, 0 ],
-    "scale": [ 1, 1, 1 ],
-    "visible": true,
-    "children": {
-        "Object_31": {
-            "position": [ 0, 0, 0 ],
-            "rotation": [ 0, 0, 0 ],
-            "scale": [ 1, 1, 1 ],
-            "visible": true,
-            "children": {
-                "Object_27": {
-                    "type": "PerspectiveCamera",
-                    "fov": 75,
-                    "aspect": 1.8459563543003852,
-                    "near": 1,
-                    "far": 1000,
-                    "position": [ 0, 0, 0 ]
-                }
-            }
-        }
-    }
-};
 
   handleLight = function( object, uniqueInd ) {
     if ( !object )
