@@ -90,7 +90,6 @@ var CssObjectLoader = (function () {
 
         } else if ( objectType == "torusknot" ) {
 
-          console.log("What?")
           objData = handleTorusKnot( curObj, uniqueInd );
           cssGeometries[ geometryTag( uniqueInd ) ] = objData.geometry;
           cssMaterials[ materialTag( uniqueInd ) ] = objData.material;
