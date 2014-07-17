@@ -31,27 +31,56 @@
 		<style id="ovr-style">
 			cube#1 {
 				width: 20;
-				height: 30;
-				depth: -50;
+				height: 10;
+				depth: 50;
 				x: 10;
 				y: 20;
 				z: -50;
 				color: #aaa000;
 			}
-			cube#2 {
-				width: 10;
-				height 40;
-				depth: 20;
-				x: -10;
-				y: 20;
-				z: -50;
-				color: #edfedf;
+			sphere#1 {
+				radius: 20;
+				x: 0;
+				y: -20;
+				z:-50;
+				color: #ccc999;
 			}
 			light#1 {
 				color: #ffffff;
 				x: 0;
 				y: 0;
 				z: 0;
+			}
+			ring#1 {
+				color: #adcadc;
+				x: -20;
+				y: -20;
+				z: -60;
+				innerRadius: 2;
+				outerRadius: 4;
+				thetaSegments: 40;
+				phySegments: 10;
+				thetaStart: 2;
+				thetaLength: 7;
+			}
+			cylinder#1 {
+				color: #edcecc;
+				x: -20;
+				y: 10;
+				z: -50;
+				radiusTop: 3;
+				radiusBottom: 3;
+			}
+			torusknot#1 {
+				radius: 20;
+				tube: 1;
+				radialSegments: 70;
+				tubularSegments: 20;
+				p: 3;
+				q: -7;
+				x: 30;
+				y: 0;
+				z: -50;
 			}
 		</style>
 	</head>
@@ -158,7 +187,7 @@
 		<script src="/js/lib/three/three.box-geometry.js"></script>
 		<script src="/js/lib/three/SceneExporter.js"></script>
 		<script src="/js/lib/three/SceneLoader.js"></script>
-		<script src="/js/lib/CssObjectLoader.js"></script>
+		<script src="/js/lib/cssObjectLoader.js"></script>
 		<script src="/js/controls/PointerLockControls.js"></script>
 		<script src="/js/controls/OculusRiftControls.js"></script>
 		<script src="/js/effects/OculusRiftEffect.js"></script>

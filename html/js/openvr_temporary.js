@@ -292,6 +292,7 @@
         loader.parse(cssImportObject, function( e ) {
             scene = e.scene;
         }, '.');
+        console.log( scene );
 
         // Render
 
