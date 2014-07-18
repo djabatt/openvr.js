@@ -1,6 +1,17 @@
 var CssObjectLoader = (function () {
 
-  this.loadCss = function() {
+  var animations = {};
+  var objectHandlers = {};
+  var cssGeometries = {}, cssMaterials = {}, cssObjects = {};
+
+  this.getAnimations = function() {
+    if ( animations!=={} )
+      return animations;
+
+    return undefined;
+  }
+
+  this.getObjects = function() {
     var data = parseCss();
     var importObject = {
       metadata: {
@@ -31,71 +42,17 @@ var CssObjectLoader = (function () {
   };
 
   this.parseCss = function() {
-    var cssGeometries = {}, cssMaterials = {}, cssObjects = {};
     $("#ovr-style").parsecss(function( result ) {
       var uniqueInd = 0;
       for ( objID in result ) {
-        var geoObj = {}, matObj = {}, objObj = {}, objData = {};
         curObj = result[ objID ];
 
         var objectType = objID.split('#')[0].toLowerCase();
-        if ( objectType == "light" ) {
 
-          objData = handleLight( curObj, uniqueInd );
-          cssObjects[ "Object_" + uniqueInd ] = objData.lightObj;
-          cssObjects[ "Object_" + (uniqueInd+1) ] = objData.targetObj;
-          uniqueInd++;
+        handleObject(objectType, curObj, uniqueInd);
+        if ( objectType == "light") uniqueInd++;
 
-        } else if ( objectType == "cube" ) {
-
-          objData = handleCube( curObj, uniqueInd );
-          cssGeometries[ geometryTag( uniqueInd ) ] = objData.geometry;
-          cssMaterials[ materialTag( uniqueInd ) ] = objData.material;
-          cssObjects[ objectTag( uniqueInd ) ] = objData.object;
-
-        } else if ( objectType == "sphere" ) {
-
-          objData = handleSphere( curObj, uniqueInd );
-          cssGeometries[ geometryTag( uniqueInd ) ] = objData.geometry;
-          cssMaterials[ materialTag( uniqueInd ) ] = objData.material;
-          cssObjects[ objectTag( uniqueInd ) ] = objData.object;
-
-        } else if ( objectType == "cylinder" ) {
-
-          objData = handleCylinder( curObj, uniqueInd );
-          cssGeometries[ geometryTag( uniqueInd ) ] = objData.geometry;
-          cssMaterials[ materialTag( uniqueInd ) ] = objData.material;
-          cssObjects[ objectTag( uniqueInd ) ] = objData.object;
-
-        } else if ( objectType == "tetrahedron" ) {
-
-          objData = handleTetrahedron( curObj, uniqueInd );
-          cssGeometries[ geometryTag( uniqueInd ) ] = objData.geometry;
-          cssMaterials[ materialTag( uniqueInd ) ] = objData.material;
-          cssObjects[ objectTag( uniqueInd ) ] = objData.object;
-
-        } else if ( objectType == "ring" ) {
-
-          objData = handleRing( curObj, uniqueInd );
-          cssGeometries[ geometryTag( uniqueInd ) ] = objData.geometry;
-          cssMaterials[ materialTag( uniqueInd ) ] = objData.material;
-          cssObjects[ objectTag( uniqueInd ) ] = objData.object;
-
-        } else if ( objectType == "torus" ) {
-
-          objData = handleTorus( curObj, uniqueInd );
-          cssGeometries[ geometryTag( uniqueInd ) ] = objData.geometry;
-          cssMaterials[ materialTag( uniqueInd ) ] = objData.material;
-          cssObjects[ objectTag( uniqueInd ) ] = objData.object;
-
-        } else if ( objectType == "torusknot" ) {
-
-          objData = handleTorusKnot( curObj, uniqueInd );
-          cssGeometries[ geometryTag( uniqueInd ) ] = objData.geometry;
-          cssMaterials[ materialTag( uniqueInd ) ] = objData.material;
-          cssObjects[ objectTag( uniqueInd ) ] = objData.object;
-
-        }
+        handleAnimations( curObj, uniqueInd );
         uniqueInd++;
       }
 
@@ -108,31 +65,34 @@ var CssObjectLoader = (function () {
     return retObj;
   };
 
+  handleObject = function( objType, object, uniqueInd ) {
+    objData = objectHandlers[objType]( object, uniqueInd );
+  }
 
   // Object models for all the types of objects in a Scene
   // TODO: Make each less static
   // TODO: allow for more material options, etc
 
-  handleLight = function( object, uniqueInd ) {
+  handleAnimations = function( object, uniqueInd ) {
+    var animObj = {}
+    if (object.spinsX)
+      animObj.spinsX = object.spinsX;
+    if ( object.spinsY )
+      animObj.spinsY = object.spinsY;
+    if ( object.spinsZ )
+      animObj.spinsZ = object.spinsZ;
+    if ( animObj !== {} )
+      animations[ objectTag(uniqueInd) ] = animObj;
+  }
+
+  objectHandlers["light"] = handleLight = function( object, uniqueInd ) {
     if ( !object )
       return;
 
     var targetObj = {
-      position: [
-        0,
-        0,
-        0
-      ],
-      rotation: [
-        0,
-        0,
-        0
-      ],
-      scale: [
-        1,
-        1,
-        1
-      ],
+      position: [ 0, 0, 0 ],
+      rotation: [ 0, 0, 0 ],
+      scale: [ 1, 1, 1 ],
       visible: true
     };
 
@@ -140,13 +100,13 @@ var CssObjectLoader = (function () {
       type: "DirectionalLight",
       color: parseInt((object.color || "#ffffff").replace("#", "0x")),
       intensity: object.intensity || 1,
-      direction: [
-        object.x || 1,
-        object.y || 1,
-        object.z || 1
-      ],
+      direction: [ object.x || 1, object.y || 1, object.z || 1 ],
       target: "Object_" + ( uniqueInd + 1 )
     };
+
+    cssObjects[ objectTag(uniqueInd) ] = lightObj;
+    cssObjects[ objectTag(uniqueInd+1) ] = targetObj;
+
     return {
       lightObj: lightObj,
       targetObj: targetObj
@@ -159,11 +119,11 @@ var CssObjectLoader = (function () {
       type: "MeshBasicMaterial",
       parameters: {
         color: parseInt((color || "#ffffff").replace("#", "0x")),
-        reflectivity: 1.5,
+        reflectivity: 1,
         transparent: false,
         opacity: 1,
         wireframe: false,
-        wireframeLineWidth: 1
+        wireframeLineWidth: 0
       }
     };
   };
@@ -176,13 +136,13 @@ var CssObjectLoader = (function () {
       visible: true
     };
     if ( geoID !== undefined && materialID !== undefined ) {
-      objObj.geometry = "Geometry_" + geoID,
-      objObj.material = "Mateiral_" + materialID
+      objObj.geometry = geometryTag( geoID );
+      objObj.material = materialTag( materialID );
     }
     return objObj;
   }
 
-  handlePlane = function( object, uniqueInd ) {
+  objectHandlers["plane"] = handlePlane = function( object, uniqueInd ) {
     if (!object)
       return
 
@@ -197,10 +157,14 @@ var CssObjectLoader = (function () {
     var matObj = basicMaterial( object.color );
     var objObj = threeObject( object, uniqueInd, uniqueInd );
 
+    cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;
+    cssMaterials[ materialTag( uniqueInd ) ] = matObj;
+    cssObjects[ objectTag( uniqueInd ) ] = objObj;
+
     return { geometry: geoObj, material: matObj, object: objObj };
   }
 
-  handleSphere = function( object, uniqueInd ) {
+  objectHandlers["sphere"] = handleSphere = function( object, uniqueInd ) {
     if (!object)
       return;
 
@@ -212,11 +176,14 @@ var CssObjectLoader = (function () {
 
     var matObj = basicMaterial( object.color );
     var objObj = threeObject( object, uniqueInd, uniqueInd );
+    cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;
+    cssMaterials[ materialTag( uniqueInd ) ] = matObj;
+    cssObjects[ objectTag( uniqueInd ) ] = objObj;
 
     return { geometry: geoObj, material: matObj, object: objObj };
   }
 
-  handleCube = function( object, uniqueInd ) {
+  objectHandlers["cube"] = handleCube = function( object, uniqueInd ) {
     if (!object) {
       return {};
     }
@@ -233,29 +200,36 @@ var CssObjectLoader = (function () {
     var matObj = basicMaterial( object.color );
     var objObj = threeObject( object, uniqueInd, uniqueInd );
 
+    cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;
+    cssMaterials[ materialTag( uniqueInd ) ] = matObj;
+    cssObjects[ objectTag( uniqueInd ) ] = objObj;
+
     return { geometry: geoObj, material: matObj, object: objObj };
   }
 
-  handleCylinder = function( object, uniqueInd ) {
+  objectHandlers["cylinder"] = handleCylinder = function( object, uniqueInd ) {
     if (!object)
       return;
-
     var geoObj = {
       type: "cylinder",
-      radiusTop: object.radiusTop || 5,
-      radiusBottom: object.radiusBottom || 5,
-      height: object.height || 10,
-      radiusSegments: object.radiusSegments || 10,
-      heightSegments: object.heightSegments || 1,
+      radiusTop: parseInt(object.radiusTop) || 5,
+      radiusBottom: parseInt(object.radiusBottom) || 5,
+      height: parseInt(object.height) || 10,
+      radiusSegments: parseInt(object.radiusSegments) || 10,
+      heightSegments: parseInt(object.heightSegments) || 1,
       openEnded: object.openEnded || false
     };
     var matObj = basicMaterial( object.color );
     var objObj = threeObject( object, uniqueInd, uniqueInd );
 
+    cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;
+    cssMaterials[ materialTag( uniqueInd ) ] = matObj;
+    cssObjects[ objectTag( uniqueInd ) ] = objObj;
+
     return { geometry: geoObj, material: matObj, object: objObj };
   }
 
-  handleTetrahedron = function( object, uniqueInd ) {
+  objectHandlers["tetrahedron"] = handleTetrahedron = function( object, uniqueInd ) {
     if ( !object )
       return;
 
@@ -263,10 +237,14 @@ var CssObjectLoader = (function () {
     var matObj = basicMaterial( object.color );
     var objObj = threeObject( object, uniqueInd, uniqueInd );
 
+    cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;
+    cssMaterials[ materialTag( uniqueInd ) ] = matObj;
+    cssObjects[ objectTag( uniqueInd ) ] = objObj;
+
     return { geometry: geoObj, material: matObj, object: objObj };
   }
 
-  handleRing = function( object, uniqueInd ) {
+  objectHandlers["ring"] = handleRing = function( object, uniqueInd ) {
     if ( !object )
       return;
 
@@ -282,10 +260,14 @@ var CssObjectLoader = (function () {
     var matObj = basicMaterial( object.color );
     var objObj = threeObject( object, uniqueInd, uniqueInd );
 
+    cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;
+    cssMaterials[ materialTag( uniqueInd ) ] = matObj;
+    cssObjects[ objectTag( uniqueInd ) ] = objObj;
+
     return { geometry: geoObj, material: matObj, object: objObj };
   }
 
-  handleTorus = function( object, uniqueInd ) {
+  objectHandlers["torus"] = handleTorus = function( object, uniqueInd ) {
     if ( !object )
       return;
 
@@ -300,10 +282,14 @@ var CssObjectLoader = (function () {
     var matObj = basicMaterial( object.color );
     var objObj = threeObject( object, uniqueInd, uniqueInd );
 
+    cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;
+    cssMaterials[ materialTag( uniqueInd ) ] = matObj;
+    cssObjects[ objectTag( uniqueInd ) ] = objObj;
+
     return { geometry: geoObj, material: matObj, object: objObj };
   }
 
-  handleTorusKnot = function( object, uniqueInd ) {
+  objectHandlers["torusknot"] = handleTorusKnot = function( object, uniqueInd ) {
     if ( !object )
       return;
 
@@ -319,6 +305,10 @@ var CssObjectLoader = (function () {
     }
     var matObj = basicMaterial( object.color );
     var objObj = threeObject( object, uniqueInd, uniqueInd );
+
+    cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;
+    cssMaterials[ materialTag( uniqueInd ) ] = matObj;
+    cssObjects[ objectTag( uniqueInd ) ] = objObj;
 
     return { geometry: geoObj, material: matObj, object: objObj };
   }

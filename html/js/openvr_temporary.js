@@ -14,7 +14,7 @@
 
         effect, // rift effect
         objects = [],
-        movingObjects = [],
+        movingObjects = {},
         ray,
 
         vrstate = new vr.State(),
@@ -29,15 +29,7 @@
             }
         };
 
-
-    // CSS Parsing -> Importable JSON
-    // Work in Progress, just toy code to get things going
-    // TODO: refactor and move to its own file
-    var cssImportObject = CssObjectLoader.loadCss();
-    console.log(JSON.stringify(cssImportObject));
-
     // Helper function
-
     function toRad( angle ) {
         return angle * (Math.PI / 180);
     }
@@ -121,57 +113,19 @@
         // Init scene
         scene = new THREE.Scene();
 
-        // Add some sweet lighting effects to the scene
-        if ( SCENE.light && SCENE.light.length >= 1 ) {
-            SCENE.light.forEach( function( lightParams ) {
-                var light = lightSource( lightParams );
-                scene.add( light );
-            });
-        }
-        else {
-            scene.add( lightSource( defaultLightParams ) );
-        }
-
-        // Fog (optional)
-        if ( SCENE.scene.fog )
-            scene.fog = new THREE.Fog( 0xffffff, 0, 750 );
-
         // Light ray caster
         ray = new THREE.Raycaster();
         ray.ray.direction.set( 0, -1, 0 );
 
-        // // Floor - aka the plane (width, height, widthSegments, heightSegments )
-        // geometry = new THREE.PlaneGeometry( SCENE.floor.width, SCENE.floor.height, 1, 1 );
-        // geometry.applyMatrix( new THREE.Matrix4().makeRotationX( - Math.PI / 2 ) );
-
-        // for ( var i = 0, l = geometry.faces.length; i < l; i ++ ) {
-        //     var face = geometry.faces[ i ];
-        //     var hexcolor = parseInt( "0x" + SCENE.floor.color );
-        //     face.vertexColors[ 0 ] = new THREE.Color().setHex( hexcolor );
-        //     face.vertexColors[ 1 ] = new THREE.Color().setHex( hexcolor );
-        //     face.vertexColors[ 2 ] = new THREE.Color().setHex( hexcolor );
-        //     face.vertexColors[ 3 ] = new THREE.Color().setHex( hexcolor );
-        // }
-
-        // // Compile floor
-        // material = new THREE.MeshBasicMaterial( { vertexColors: THREE.VertexColors } );
-        // mesh = new THREE.Mesh( geometry, material );
-
-        // // Add floor to scene
-        // scene.add( mesh );
-
-
-        // var exporter = new THREE.SceneExporter();
-        // var sceneJson = JSON.stringify(exporter.parse(scene));
-        // localStorage.setItem('scene', sceneJson);
+        // CSS Parsing -> Importable JSON
+        var cssImportObject = CssObjectLoader.getObjects();
+        movingObjects = CssObjectLoader.getAnimations();
 
         var loader = new THREE.SceneLoader();
         // var jScene = JSON.parse(localStorage.getItem('scene'));
         loader.parse(cssImportObject, function( e ) {
             scene = e.scene;
-        console.log( e.scene );
         }, '.');
-
 
         // Init camera
         camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
@@ -182,7 +136,6 @@
         scene.add( controls.getObject() );
 
         // Render
-
         renderer = new THREE.WebGLRenderer({
             devicePixelRatio: 1,
             alpha: false,
@@ -194,8 +147,7 @@
 
         document.body.appendChild( renderer.domElement );
 
-        //
-
+        // Attach necessary event listeners
         window.addEventListener( 'resize', onWindowResize, false );
         document.addEventListener( 'keydown', keyPressed, false );
     }
@@ -247,12 +199,13 @@
             }
         }
 
-        // Object motion will be included here
-        for ( var i = 0; i < movingObjects.length; i ++) {
-            movingObjects[i].rotation.x += toRad( movingObjects[i].spins.x || 0 );
-            movingObjects[i].rotation.y += toRad( movingObjects[i].spins.y || 0 );
-            movingObjects[i].rotation.z += toRad( movingObjects[i].spins.z || 0 );
+        for ( objID in movingObjects ) {
+            var curObj = movingObjects[ objID ];
+            scene.getChildByName( objID ).rotation.x += toRad( curObj.spinsX || 0 );
+            scene.getChildByName( objID ).rotation.y += toRad( curObj.spinsY || 0 );
+            scene.getChildByName( objID ).rotation.z += toRad( curObj.spinsZ || 0 );
         }
+
         // Poll VR, if it's ready.
          var polled = vr.pollState(vrstate);
         // controls.update( Date.now() - time, polled ? vrstate : null );
