@@ -20,7 +20,8 @@ var CssObjectLoader = (function () {
         generatedBy: "SceneExporter",
         objects: Object.keys(data.objects).length,
         geometries: Object.keys(data.geometries).length,
-        materials: Object.keys(data.materials).length
+        materials: Object.keys(data.materials).length,
+        textures: 0
       },
       urlBaseType: "relativeToScene",
       objects: data.objects,
@@ -99,7 +100,7 @@ var CssObjectLoader = (function () {
     var lightObj = {
       type: "DirectionalLight",
       color: parseInt((object.color || "#ffffff").replace("#", "0x")),
-      intensity: object.intensity || 1,
+      intensity: object.intensity || 1.5,
       direction: [ object.x || 1, object.y || 1, object.z || 1 ],
       target: "Object_" + ( uniqueInd + 1 )
     };
@@ -116,14 +117,16 @@ var CssObjectLoader = (function () {
 
   basicMaterial = function( color ) {
     return {
-      type: "MeshBasicMaterial",
+      type: "MeshLambertMaterial",
       parameters: {
         color: parseInt((color || "#ffffff").replace("#", "0x")),
+        ambient: parseInt("0xffffff"),
+        emissive: 0,
         reflectivity: 1,
         transparent: false,
         opacity: 1,
         wireframe: false,
-        wireframeLineWidth: 0
+        wireframeLineWidth: 1
       }
     };
   };
