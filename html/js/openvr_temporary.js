@@ -31,7 +31,6 @@
         };
 
     container = document.getElementById( 'container' );
-
     // Helper function
     function toRad( angle ) {
         return angle * (Math.PI / 180);
@@ -123,6 +122,7 @@
 
         // CSS Parsing -> Importable JSON
         var cssImportObject = CssObjectLoader.getObjects();
+        console.log(JSON.stringify(cssImportObject));
         movingObjects = CssObjectLoader.getAnimations();
 
         var loader = new THREE.SceneLoader();
