@@ -184,7 +184,7 @@
 
             switch (object.type) {
                 case "cube":
-                    geometry = new THREE.BoxGeometry( object.scale, object.scale, object.scale );
+                    geometry = new THREE.CubeGeometry( object.scale, object.scale, object.scale );
 
                     for ( var i = 0, l = geometry.faces.length; i < l; i ++ ) {
 
@@ -282,15 +282,7 @@
         });
 
         var exporter = new THREE.SceneExporter();
-        var sceneJson = JSON.stringify(exporter.parse(scene));
-        console.log(exporter.parse(scene));
-        localStorage.setItem('scene', sceneJson);
-
-        // var loader = new THREE.SceneLoader();
-        // var jScene = JSON.parse(localStorage.getItem('scene'));
-        // loader.parse(jScene, function( e ) {
-        //     scene = e.scene;
-        // }, '.');
+        console.log(JSON.stringify(exporter.parse(scene)));
 
         // Render
 
@@ -310,6 +302,29 @@
         window.addEventListener( 'resize', onWindowResize, false );
         document.addEventListener( 'keydown', keyPressed, false );
     }
+
+    // function makeMotionMatrix( object ) {
+    //     var totalMatrix = new THREE.Matrix4().identity();
+    //     var tempMatrix = new THREE.Matrix4().identity();
+    //     if ( object.spins ) {
+    //         if (object.spins.x)
+    //             totalMatrix.multiply( tempMatrix.makeRotationX( toRad(parseInt(object.spins.x)) ) );
+    //         if (object.spins.y)
+    //             totalMatrix.multiply( tempMatrix.makeRotationY( toRad(parseInt(object.spins.y)) ) );
+    //         if (object.spins.z)
+    //             totalMatrix.multiply( tempMatrix.makeRotationZ( toRad(parseInt(object.spins.z)) ) );
+    //     }
+    //     if ( object.orbits ) {
+    //         totalMatrix.multiply( tempMatrix.makeTranslationX( parseInt(object.orbits.radius) ) );
+    //         if ( object.orbits.x )
+    //             totalMatrix.multiply( tempMatrix.makeRotationX( toRad( parseInt(object.orbits.x) ) ) );
+    //         if ( object.orbits.y )
+    //             totalMatrix.multiply( tempMatrix.makeRotationY( toRad( parseInt(object.orbits.y) ) ) );
+    //         if ( object.orbits.z )
+    //             totalMatrix.multiply( tempMatrix.makeRotationZ( toRad( parseInt(object.orbits.z) ) ) );
+    //     }
+    //     return totalMatrix;
+    // }
 
     function onWindowResize() {
     }
