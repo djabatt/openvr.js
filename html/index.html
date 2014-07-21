@@ -88,111 +88,18 @@
 		</style>
 	</head>
 	<body>
-		<input type="file" id="vr-obj-file" style="display:block" />
-		<script>
-			var SCENE = {
-			    "scene": {
-
-			        "pixel_ratio": 1,
-			        "alpha": false,
-			        "fog": false
-			    },
-		        "light": [
-			        {
-			            "color": "ffffff",
-			            "intensity": 1.5,
-			            "position": {
-			                "x": 1.5,
-			                "y": 1.5,
-			                "z": 1.5
-			            }
-			        },
-			        {
-			            "color": "ffffff",
-			            "intensity": 1,
-			            "position": {
-			                "x": -1.5,
-			                "y": -1.5,
-			                "z": -1.5
-			            }
-			        }
-			    ],
-			    "floor": {
-			        "width": 2000,
-			        "height": 2000,
-			        "color": "f0ffff"
-			    },
-
-			    "objects": [
-			        {
-			            "type": "cube",
-			            "scale": 30,
-			            "position": {
-			                "x": 0,
-			                "y": 10,
-			                "z": -50
-			            },
-			            "colors": [
-			                "003366",
-			                "0033ff",
-			                "003366",
-			                "ffffff"
-			            ]
-			        },
-			        {
-			            "type": "cube",
-			            "scale": 25,
-			            "position": {
-			                "x": 50,
-			                "y": 10,
-			                "z": -50
-			            },
-			            "colors": [
-			                "990000",
-			                "aa0000",
-			                "990000",
-			                "ffffff"
-			            ]
-			        },
-			        {
-			            "type": "cube",
-			            "position": {
-			                "x": -50,
-			                "y": 10,
-			                "z": -50
-			            },
-			            "colors": [
-			                "ffff00",
-			                "aaaa00",
-			                "ffff00",
-			                "ffffff"
-			            ]
-			        },
-			        {
-			        	"type": "sphere",
-			        	"position": {
-			        		"x": 0,
-			        		"y": 40,
-			        		"z": -50
-			        	},
-			        	"color": "bbbbbb",
-			        	"scale": 10
-			        }
-			    ]
-			};
-		</script>
-
+		<div id="container"></div>
 		<script src="/js/lib/jquery/jquery-1.11.1.min.js"></script>
 		<script src="/js/lib/jquery/jquery.css-parser.js"></script>
 		<script src="/js/lib/vr.js"></script>
 		<script src="/js/lib/three/three.js"></script>
-		<script src="/js/lib/three/euler.three.js"></script>
 		<script src="/js/lib/three/three.box-geometry.js"></script>
 		<script src="/js/lib/three/SceneExporter.js"></script>
 		<script src="/js/lib/three/SceneLoader.js"></script>
 		<script src="/js/lib/cssObjectLoader.js"></script>
 		<script src="/js/controls/PointerLockControls.js"></script>
 		<script src="/js/controls/OculusRiftControls.js"></script>
+		<script src="/js/controls/DeviceOrientationControls.js"></script>
 		<script src="/js/effects/OculusRiftEffect.js"></script>
 		<script src="/js/lib/fonts/helvetiker_regular.typeface.js"></script>
 		<script src="/js/lib/fonts/helvetiker_bold.typeface.js"></script>

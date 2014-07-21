@@ -1,7 +1,8 @@
 (function() {
 
     // Vars
-    var camera,
+    var container,
+        camera,
         scene,
         renderer,
 
@@ -29,6 +30,8 @@
             }
         };
 
+    container = document.getElementById( 'container' );
+
     // Helper function
     function toRad( angle ) {
         return angle * (Math.PI / 180);
@@ -36,11 +39,12 @@
 
     // Initialize VR.js
     vr.load( function( error ) {
-        if ( error ) {
-            alert('Plugin load failed: ' + error.toString());
-        }
+        // if ( error ) {
+        //     alert('Plugin load failed: ' + error.toString());
+        // }
 
         initObjects();
+        controls.connect();
         animate();
     });
 
@@ -55,56 +59,56 @@
     }
 
 
-    var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+    // var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 
-    if ( havePointerLock ) {
-     var element = document.body;
+    // if ( havePointerLock ) {
+    //  var element = document.body;
 
-     var fullscreenchange = function ( event ) {
-         if (document.fullscreenElement === element ||
-                 document.mozFullscreenElement === element ||
-                 document.mozFullScreenElement === element) {
-             document.removeEventListener( 'fullscreenchange', fullscreenchange );
-             document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
-             element.requestPointerLock();
-         }
-     }
+    //  var fullscreenchange = function ( event ) {
+    //      if (document.fullscreenElement === element ||
+    //              document.mozFullscreenElement === element ||
+    //              document.mozFullScreenElement === element) {
+    //          document.removeEventListener( 'fullscreenchange', fullscreenchange );
+    //          document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
+    //          element.requestPointerLock();
+    //      }
+    //  }
 
-     document.addEventListener( 'fullscreenchange', fullscreenchange, false );
-     document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
+    //  document.addEventListener( 'fullscreenchange', fullscreenchange, false );
+    //  document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
 
-     element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
+    //  element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
 
-     var pointerlockchange = function ( event ) {
-         if (document.pointerLockElement === element ||
-                 document.mozPointerLockElement === element ||
-                 document.webkitPointerLockElement === element) {
-             controls.enabled = true;
-         } else {
-             controls.enabled = false;
-         }
-     }
+    //  var pointerlockchange = function ( event ) {
+    //      if (document.pointerLockElement === element ||
+    //              document.mozPointerLockElement === element ||
+    //              document.webkitPointerLockElement === element) {
+    //          controls.enabled = true;
+    //      } else {
+    //          controls.enabled = false;
+    //      }
+    //  }
 
-     var pointerlockerror = function ( event ) {
-     }
+    //  var pointerlockerror = function ( event ) {
+    //  }
 
      // Hook pointer lock state change events
-     document.addEventListener( 'pointerlockchange', pointerlockchange, false );
-     document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
-     document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
+    //  document.addEventListener( 'pointerlockchange', pointerlockchange, false );
+    //  document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
+    //  document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
 
-     document.addEventListener( 'pointerlockerror', pointerlockerror, false );
-     document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
-     document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
+    //  document.addEventListener( 'pointerlockerror', pointerlockerror, false );
+    //  document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
+    //  document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
 
-     document.body.addEventListener( 'click', function ( event ) {
-         // Ask the browser to lock the pointer
-         element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
-         element.requestPointerLock();
-     }, false );
-    } else {
-     instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
-    }
+    //  document.body.addEventListener( 'click', function ( event ) {
+    //      // Ask the browser to lock the pointer
+    //      element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+    //      element.requestPointerLock();
+    //  }, false );
+    // } else {
+    //  instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
+    // }
 
     function initObjects() {
         // Clear objects and moving objects list
@@ -128,24 +132,35 @@
         }, '.');
 
         // Init camera
-        camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1000 );
+        camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
 
         // Init controls
+        // For OculusRiftControls, this was broken due to plugins/drivers
         // controls = new THREE.OculusRiftControls( camera );
-        controls = new THREE.PointerLockControls( camera );
-        scene.add( controls.getObject() );
+
+        // For laptop browser controls:
+        // controls = new THREE.PointerLockControls( camera );
+
+        scene.add(camera);
+        // For mobile device orientation controls
+        controls = new THREE.DeviceOrientationControls( camera );
+        // scene.add( controls.getObject() );
 
         // Render
         renderer = new THREE.WebGLRenderer({
             devicePixelRatio: 1,
             alpha: false,
             clearColor: 0xffffff,
+            autoUpdateObjects: true,
             antialias: true
         });
 
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        renderer.domElement.style.position = "absolute";
+        renderer.domElement.style.top = 0;
         effect = new THREE.OculusRiftEffect( renderer );
 
-        document.body.appendChild( renderer.domElement );
+        container.appendChild( renderer.domElement );
 
         // Attach necessary event listeners
         window.addEventListener( 'resize', onWindowResize, false );
@@ -153,6 +168,8 @@
     }
 
     function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
     }
 
     function keyPressed (event) {
@@ -183,27 +200,27 @@
     }
 
     function animate() {
-        vr.requestAnimationFrame(animate);
+        // vr.requestAnimationFrame(animate);
+        window.requestAnimationFrame( animate );
 
-        controls.isOnObject( false );
-        controls.update();
+        // controls.isOnObject( false );
 
-        ray.ray.origin.copy( controls.getObject().position );
-        ray.ray.origin.y -= 10;
+        // ray.ray.origin.copy( controls.getObject().position );
+        // ray.ray.origin.y -= 10;
 
-        var intersections = ray.intersectObjects( objects );
-        if ( intersections.length > 0 ) {
-            var distance = intersections[ 0 ].distance;
-            if ( distance > 0 && distance < 10 ) {
-                controls.isOnObject( true );
-            }
-        }
+        // var intersections = ray.intersectObjects( objects );
+        // if ( intersections.length > 0 ) {
+        //     var distance = intersections[ 0 ].distance;
+        //     if ( distance > 0 && distance < 10 ) {
+        //         controls.isOnObject( true );
+        //     }
+        // }
 
         for ( objID in movingObjects ) {
             var curObj = movingObjects[ objID ];
-            scene.getChildByName( objID ).rotation.x += toRad( curObj.spinsX || 0 );
-            scene.getChildByName( objID ).rotation.y += toRad( curObj.spinsY || 0 );
-            scene.getChildByName( objID ).rotation.z += toRad( curObj.spinsZ || 0 );
+            scene.getObjectByName( objID ).rotation.x += toRad( curObj.spinsX || 0 );
+            scene.getObjectByName( objID ).rotation.y += toRad( curObj.spinsY || 0 );
+            scene.getObjectByName( objID ).rotation.z += toRad( curObj.spinsZ || 0 );
         }
 
         // Poll VR, if it's ready.
@@ -213,17 +230,5 @@
         controls.update();
         //renderer.render( scene, camera );
         effect.render( scene, camera, polled ? vrstate : null );
-
-        time = Date.now();
     }
-
-    vrObjFile = document.getElementById("vr-obj-file");
-    vrObjFile.addEventListener('change', function(event) {
-        var fr = new FileReader();
-        fr.onload = function(theFile) {
-            SCENE = JSON.parse(fr.result);
-            initObjects();
-        }
-        fr.readAsText(event.target.files[0]);
-    }, false);
 })();
