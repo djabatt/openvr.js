@@ -852,6 +852,12 @@ THREE.SceneLoader.prototype = {
 				geometry.name = geoID;
 				result.geometries[ geoID ] = geometry;
 
+			} else if ( geoJSON.type === "ring" ) {
+
+				geometry = new THREE.RingGeometry( geoJSON.innerRadius, geoJSON.outerRadius, geoJSON.thetaSegments, geoJSON.phiSegments, geoJSON.thetaStart, geoJSON.thetaLength );
+				geometry.name = geoID;
+				result.geometries[ geoID ] = geometry;
+
 			} else if ( geoJSON.type === "torus" ) {
 
 				geometry = new THREE.TorusGeometry( geoJSON.radius, geoJSON.tube, geoJSON.radialSegments, geoJSON.tubularSegments, geoJSON.arc );
@@ -864,9 +870,21 @@ THREE.SceneLoader.prototype = {
 				geometry.name = geoID;
 				result.geometries[ geoID ] = geometry;
 
+			} else if ( geoJSON.type === "tetrahedron" ) {
+
+				geometry = new THREE.TetrahedronGeometry( geoJSON.radius, geoJSON.detail );
+				geometry.name = geoID;
+				result.geometries[ geoID ] = geometry;
+
 			} else if ( geoJSON.type === "icosahedron" ) {
 
 				geometry = new THREE.IcosahedronGeometry( geoJSON.radius, geoJSON.subdivisions );
+				geometry.name = geoID;
+				result.geometries[ geoID ] = geometry;
+
+			} else if ( geoJSON.type === "text" ) {
+
+				geometry = new THREE.TextGeometry( geoJSON.text, geoJSON.parameters );
 				geometry.name = geoID;
 				result.geometries[ geoID ] = geometry;
 

@@ -490,6 +490,7 @@ THREE.SceneExporter.prototype = {
 
 				'\t' + LabelString( getGeometryName( g ) ) + ': {',
 				' "type"    : "text",',
+				' "text"  : "' + g.text + '",',
 				' "parameters"  : {',
 					' "height"  : ' + g.parameters.height + ',',
 					' "bevelThickness"  : ' + g.parameters.bevelThickness + ',',
