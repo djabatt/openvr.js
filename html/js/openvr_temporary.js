@@ -125,7 +125,7 @@
         // CSS Parsing -> Importable JSON
         var cssImportObject = CssObjectLoader.getObjects();
         movingObjects = CssObjectLoader.getAnimations();
-        rotatedObjects = CssObjectLoader.getRotations();
+        // rotatedObjects = CssObjectLoader.getRotations();
 
         var loader = new THREE.SceneLoader();
         // var jScene = JSON.parse(localStorage.getItem('scene'));
