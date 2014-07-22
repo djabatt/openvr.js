@@ -43,7 +43,9 @@
         // }
 
         initObjects();
-        controls.connect();
+        if (controls.connect) {
+            controls.connect();
+        }
         animate();
     });
 
@@ -58,56 +60,56 @@
     }
 
 
-    // var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+    var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 
-    // if ( havePointerLock ) {
-    //  var element = document.body;
+    if ( havePointerLock ) {
+     var element = document.body;
 
-    //  var fullscreenchange = function ( event ) {
-    //      if (document.fullscreenElement === element ||
-    //              document.mozFullscreenElement === element ||
-    //              document.mozFullScreenElement === element) {
-    //          document.removeEventListener( 'fullscreenchange', fullscreenchange );
-    //          document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
-    //          element.requestPointerLock();
-    //      }
-    //  }
+     var fullscreenchange = function ( event ) {
+         if (document.fullscreenElement === element ||
+                 document.mozFullscreenElement === element ||
+                 document.mozFullScreenElement === element) {
+             document.removeEventListener( 'fullscreenchange', fullscreenchange );
+             document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
+             element.requestPointerLock();
+         }
+     }
 
-    //  document.addEventListener( 'fullscreenchange', fullscreenchange, false );
-    //  document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
+     document.addEventListener( 'fullscreenchange', fullscreenchange, false );
+     document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
 
-    //  element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
+     element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
 
-    //  var pointerlockchange = function ( event ) {
-    //      if (document.pointerLockElement === element ||
-    //              document.mozPointerLockElement === element ||
-    //              document.webkitPointerLockElement === element) {
-    //          controls.enabled = true;
-    //      } else {
-    //          controls.enabled = false;
-    //      }
-    //  }
+     var pointerlockchange = function ( event ) {
+         if (document.pointerLockElement === element ||
+                 document.mozPointerLockElement === element ||
+                 document.webkitPointerLockElement === element) {
+             controls.enabled = true;
+         } else {
+             controls.enabled = false;
+         }
+     }
 
-    //  var pointerlockerror = function ( event ) {
-    //  }
+     var pointerlockerror = function ( event ) {
+     }
 
      // Hook pointer lock state change events
-    //  document.addEventListener( 'pointerlockchange', pointerlockchange, false );
-    //  document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
-    //  document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
+     document.addEventListener( 'pointerlockchange', pointerlockchange, false );
+     document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
+     document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
 
-    //  document.addEventListener( 'pointerlockerror', pointerlockerror, false );
-    //  document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
-    //  document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
+     document.addEventListener( 'pointerlockerror', pointerlockerror, false );
+     document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
+     document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
 
-    //  document.body.addEventListener( 'click', function ( event ) {
-    //      // Ask the browser to lock the pointer
-    //      element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
-    //      element.requestPointerLock();
-    //  }, false );
-    // } else {
-    //  instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
-    // }
+     document.body.addEventListener( 'click', function ( event ) {
+         // Ask the browser to lock the pointer
+         element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+         element.requestPointerLock();
+     }, false );
+    } else {
+     instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
+    }
 
     function initObjects() {
         // Clear objects and moving objects list
@@ -122,14 +124,36 @@
 
         // CSS Parsing -> Importable JSON
         var cssImportObject = CssObjectLoader.getObjects();
-        console.log(JSON.stringify(cssImportObject));
         movingObjects = CssObjectLoader.getAnimations();
+        rotatedObjects = CssObjectLoader.getRotations();
 
         var loader = new THREE.SceneLoader();
         // var jScene = JSON.parse(localStorage.getItem('scene'));
         loader.parse(cssImportObject, function( e ) {
             scene = e.scene;
         }, '.');
+
+        // Apply initial static rotations
+        // for ( objID in rotatedObjects ) {
+        //     var currentObj = scene.getObjectByName( objID );
+        //     var currentRot = rotatedObjects[ objID ];
+        //     if ( currentRot.rotateX ) {
+        //         console.log("rotating by x");
+        //         currentObj.geometry.applyMatrix(
+        //             new THREE.Matrix4().makeRotationX( toRad( parseInt(currentRot.rotateX) ) )
+        //         );
+        //     }
+        //     if ( currentRot.rotateY ) {
+        //         currentObj.geometry.applyMatrix(
+        //             new THREE.Matrix4().makeRotationY( toRad( parseInt(currentRot.rotateY) ) )
+        //         );
+        //     }
+        //     if ( currentRot.rotateZ ) {
+        //         currentObj.geometry.applyMatrix(
+        //             new THREE.Matrix4().makeRotationZ( toRad( parseInt(currentRot.rotateZ) ) )
+        //         );
+        //     }
+        // }
 
         // Init camera
         camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
@@ -138,13 +162,16 @@
         // For OculusRiftControls, this was broken due to plugins/drivers
         // controls = new THREE.OculusRiftControls( camera );
 
-        // For laptop browser controls:
-        // controls = new THREE.PointerLockControls( camera );
-
         scene.add(camera);
         // For mobile device orientation controls
-        controls = new THREE.DeviceOrientationControls( camera );
-        // scene.add( controls.getObject() );
+        if ( window.orientation ) {
+            controls = new THREE.DeviceOrientationControls( camera );
+        // For laptop browser controls:
+        } else {
+            controls = new THREE.PointerLockControls( camera );
+            scene.add( controls.getObject() );
+        }
+
 
         // Render
         renderer = new THREE.WebGLRenderer({
@@ -203,18 +230,20 @@
         // vr.requestAnimationFrame(animate);
         window.requestAnimationFrame( animate );
 
-        // controls.isOnObject( false );
+        if (controls.isOnObject) {
+            controls.isOnObject( false );
 
-        // ray.ray.origin.copy( controls.getObject().position );
-        // ray.ray.origin.y -= 10;
+            ray.ray.origin.copy( controls.getObject().position );
+            ray.ray.origin.y -= 10;
 
-        // var intersections = ray.intersectObjects( objects );
-        // if ( intersections.length > 0 ) {
-        //     var distance = intersections[ 0 ].distance;
-        //     if ( distance > 0 && distance < 10 ) {
-        //         controls.isOnObject( true );
-        //     }
-        // }
+            var intersections = ray.intersectObjects( objects );
+            if ( intersections.length > 0 ) {
+                var distance = intersections[ 0 ].distance;
+                if ( distance > 0 && distance < 10 ) {
+                    controls.isOnObject( true );
+                }
+            }
+        }
 
         for ( objID in movingObjects ) {
             var curObj = movingObjects[ objID ];
