@@ -47,6 +47,7 @@
             controls.connect();
         }
         animate();
+
     });
 
     function lightSource( params ) {
@@ -165,6 +166,7 @@
         scene.add(camera);
         // For mobile device orientation controls
         if ( window.orientation ) {
+            console.log(window.orientation);
             controls = new THREE.DeviceOrientationControls( camera );
         // For laptop browser controls:
         } else {
@@ -182,9 +184,6 @@
             antialias: true
         });
 
-        renderer.setSize( window.innerWidth, window.innerHeight );
-        renderer.domElement.style.position = "absolute";
-        renderer.domElement.style.top = 0;
         effect = new THREE.OculusRiftEffect( renderer );
 
         container.appendChild( renderer.domElement );
