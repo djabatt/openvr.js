@@ -174,6 +174,7 @@
         }
 
 
+        var DPR = window.devicePixelRatio;
         // Render
         renderer = new THREE.WebGLRenderer({
             devicePixelRatio: 1,
@@ -182,11 +183,11 @@
             autoUpdateObjects: true,
             antialias: true
         });
-        console.log("Init innerWidth: " + window.innerWidth );
-        console.log("Init innerHeight: " + window.innerHeight );
 
-        renderer.setSize( window.innerWidth, window.innerHeight, false );
+        renderer.setSize( window.innerWidth, window.innerHeight );
         renderer.setViewport( 0, 0, window.innerWidth, window.innerHeight);
+        console.log("innerWidth: " + window.innerWidth);
+        console.log("innerHeight: " + window.innerHeight);
         effect = new THREE.OculusRiftEffect( renderer );
 
 
