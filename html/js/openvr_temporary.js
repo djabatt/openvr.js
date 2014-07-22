@@ -166,7 +166,6 @@
         scene.add(camera);
         // For mobile device orientation controls
         if ( window.orientation ) {
-            console.log(window.orientation);
             controls = new THREE.DeviceOrientationControls( camera );
         // For laptop browser controls:
         } else {
@@ -183,8 +182,17 @@
             autoUpdateObjects: true,
             antialias: true
         });
+        console.log("Init innerWidth: " + window.innerWidth );
+        console.log("Init innerHeight: " + window.innerHeight );
 
+        renderer.setSize( window.innerWidth, window.innerHeight, false );
+        renderer.setViewport( 0, 0, window.innerWidth, window.innerHeight);
         effect = new THREE.OculusRiftEffect( renderer );
+
+
+        container.onclick = function() {
+            container.webkitRequestFullscreen();
+        }
 
         container.appendChild( renderer.domElement );
 
