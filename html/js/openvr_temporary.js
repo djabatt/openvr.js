@@ -186,8 +186,6 @@
 
         renderer.setSize( window.innerWidth, window.innerHeight );
         renderer.setViewport( 0, 0, window.innerWidth, window.innerHeight);
-        console.log("innerWidth: " + window.innerWidth);
-        console.log("innerHeight: " + window.innerHeight);
         effect = new THREE.OculusRiftEffect( renderer );
 
 
