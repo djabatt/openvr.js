@@ -139,9 +139,9 @@ var CssObjectLoader = (function () {
 
   };
 
-  basicMaterial = function( color ) {
+  basicMaterial = function( color, materialType ) {
     return {
-      type: "MeshLambertMaterial",
+      type: materialType || "MeshLambertMaterial",
       parameters: {
         color: parseInt((color || "#ffffff").replace("#", "0x")),
         ambient: parseInt("0xffffff"),
@@ -181,7 +181,7 @@ var CssObjectLoader = (function () {
       heightSegments: object.heightSegments || 1
     };
 
-    var matObj = basicMaterial( object.color );
+    var matObj = basicMaterial( object.color, "MeshBasicMaterial" );
     var objObj = threeObject( object, uniqueInd, uniqueInd );
 
     cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;

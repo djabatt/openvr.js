@@ -126,7 +126,7 @@
         // CSS Parsing -> Importable JSON
         var cssImportObject = CssObjectLoader.getObjects();
         movingObjects = CssObjectLoader.getAnimations();
-        // rotatedObjects = CssObjectLoader.getRotations();
+        rotatedObjects = CssObjectLoader.getRotations();
 
         var loader = new THREE.SceneLoader();
         // var jScene = JSON.parse(localStorage.getItem('scene'));
@@ -135,26 +135,25 @@
         }, '.');
 
         // Apply initial static rotations
-        // for ( objID in rotatedObjects ) {
-        //     var currentObj = scene.getObjectByName( objID );
-        //     var currentRot = rotatedObjects[ objID ];
-        //     if ( currentRot.rotateX ) {
-        //         console.log("rotating by x");
-        //         currentObj.geometry.applyMatrix(
-        //             new THREE.Matrix4().makeRotationX( toRad( parseInt(currentRot.rotateX) ) )
-        //         );
-        //     }
-        //     if ( currentRot.rotateY ) {
-        //         currentObj.geometry.applyMatrix(
-        //             new THREE.Matrix4().makeRotationY( toRad( parseInt(currentRot.rotateY) ) )
-        //         );
-        //     }
-        //     if ( currentRot.rotateZ ) {
-        //         currentObj.geometry.applyMatrix(
-        //             new THREE.Matrix4().makeRotationZ( toRad( parseInt(currentRot.rotateZ) ) )
-        //         );
-        //     }
-        // }
+        for ( objID in rotatedObjects ) {
+            var currentObj = scene.getObjectByName( objID );
+            var currentRot = rotatedObjects[ objID ];
+            if ( currentRot.rotateX ) {
+                currentObj.geometry.applyMatrix(
+                    new THREE.Matrix4().makeRotationX( toRad( parseInt(currentRot.rotateX) ) )
+                );
+            }
+            if ( currentRot.rotateY ) {
+                currentObj.geometry.applyMatrix(
+                    new THREE.Matrix4().makeRotationY( toRad( parseInt(currentRot.rotateY) ) )
+                );
+            }
+            if ( currentRot.rotateZ ) {
+                currentObj.geometry.applyMatrix(
+                    new THREE.Matrix4().makeRotationZ( toRad( parseInt(currentRot.rotateZ) ) )
+                );
+            }
+        }
 
         // Init camera
         camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
