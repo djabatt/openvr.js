@@ -1,4 +1,4 @@
-var Editor = (function() {
+var TextEditor = (function() {
 	var cssEditor = document.getElementById("css");
 	var cssSubmitButton = document.getElementById("submit-css");
 	var renderCB = {};

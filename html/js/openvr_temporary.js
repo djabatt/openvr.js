@@ -10,7 +10,7 @@
         movingObjects = {},
         ray;
 
-    var editor = Editor;
+    var editor = TextEditor;
     editor.setCallback( buildScene );
 
     // Div wrapping the renderer's canvas
