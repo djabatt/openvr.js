@@ -38,9 +38,6 @@
     window.onload = function( error ) {
 
         initObjects();
-        if ( controls && controls.connect ) {
-            controls.connect();
-        }
         animate();
 
     };
@@ -54,17 +51,16 @@
 
     $(".fullscreen").on('click', function() {
         event.preventDefault();
-        console.log("fs click");
         toggleControls();
     });
 
     function setControls() {
 
         container.webkitRequestFullscreen();
-
         // For mobile device orientation controls
-        if ( window.orientation ) {
+        if ( window.orientation !== undefined ) {
             controls = new THREE.DeviceOrientationControls( camera );
+            controls.connect();
         // For laptop browser controls:
         } else {
             // TODO: Fix pointer Lock, idk why it won't actually request it...
@@ -83,13 +79,13 @@
 
         if( $('#container').hasClass('controlled') ) {
             // Remove controls
-            if ( window.orientation ) {
-                controls = undefined;
+            if ( window.orientation !== undefined ) {
+                controls.disconnect();
+                delete controls;
             } else {
                 var controlObject = scene.getObjectByName("PointerLockControls");
                 scene.remove( controlObject );
             }
-            console.log("removing controlled");
             $('#container').removeClass('controlled');
         } else {
             setControls();
