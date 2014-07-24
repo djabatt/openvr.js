@@ -43,7 +43,9 @@
         // }
 
         initObjects();
-        controls.connect();
+        if ( controls && controls.connect ) {
+            controls.connect();
+        }
         animate();
     });
 
@@ -57,57 +59,59 @@
         return light;
     }
 
+    function setupPointerLock() {
+        var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 
-    // var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
+        if ( havePointerLock ) {
+         var element = document.body;
 
-    // if ( havePointerLock ) {
-    //  var element = document.body;
+         var fullscreenchange = function ( event ) {
+             if (document.fullscreenElement === element ||
+                     document.mozFullscreenElement === element ||
+                     document.mozFullScreenElement === element) {
+                 document.removeEventListener( 'fullscreenchange', fullscreenchange );
+                 document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
+                 element.requestPointerLock();
+             }
+         }
 
-    //  var fullscreenchange = function ( event ) {
-    //      if (document.fullscreenElement === element ||
-    //              document.mozFullscreenElement === element ||
-    //              document.mozFullScreenElement === element) {
-    //          document.removeEventListener( 'fullscreenchange', fullscreenchange );
-    //          document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
-    //          element.requestPointerLock();
-    //      }
-    //  }
+         document.addEventListener( 'fullscreenchange', fullscreenchange, false );
+         document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
 
-    //  document.addEventListener( 'fullscreenchange', fullscreenchange, false );
-    //  document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
+         element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
 
-    //  element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
+         var pointerlockchange = function ( event ) {
+             if (document.pointerLockElement === element ||
+                     document.mozPointerLockElement === element ||
+                     document.webkitPointerLockElement === element) {
+                 controls.enabled = true;
+             } else {
+                 controls.enabled = false;
+             }
+         }
 
-    //  var pointerlockchange = function ( event ) {
-    //      if (document.pointerLockElement === element ||
-    //              document.mozPointerLockElement === element ||
-    //              document.webkitPointerLockElement === element) {
-    //          controls.enabled = true;
-    //      } else {
-    //          controls.enabled = false;
-    //      }
-    //  }
+         var pointerlockerror = function ( event ) {
+         }
 
-    //  var pointerlockerror = function ( event ) {
-    //  }
+         // Hook pointer lock state change events
+         document.addEventListener( 'pointerlockchange', pointerlockchange, false );
+         document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
+         document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
 
-     // Hook pointer lock state change events
-    //  document.addEventListener( 'pointerlockchange', pointerlockchange, false );
-    //  document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
-    //  document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
+         document.addEventListener( 'pointerlockerror', pointerlockerror, false );
+         document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
+         document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
 
-    //  document.addEventListener( 'pointerlockerror', pointerlockerror, false );
-    //  document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
-    //  document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
+         document.body.addEventListener( 'click', function ( event ) {
+             // Ask the browser to lock the pointer
+             element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
+             element.requestPointerLock();
+         }, false );
+        } else {
+         instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
+        }
+    }
 
-    //  document.body.addEventListener( 'click', function ( event ) {
-    //      // Ask the browser to lock the pointer
-    //      element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
-    //      element.requestPointerLock();
-    //  }, false );
-    // } else {
-    //  instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
-    // }
 
     function initObjects() {
         // Clear objects and moving objects list
@@ -122,7 +126,6 @@
 
         // CSS Parsing -> Importable JSON
         var cssImportObject = CssObjectLoader.getObjects();
-        console.log(JSON.stringify(cssImportObject));
         movingObjects = CssObjectLoader.getAnimations();
 
         var loader = new THREE.SceneLoader();
@@ -134,17 +137,18 @@
         // Init camera
         camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
 
+        scene.add(camera);
         // Init controls
-        // For OculusRiftControls, this was broken due to plugins/drivers
-        // controls = new THREE.OculusRiftControls( camera );
-
         // For laptop browser controls:
         // controls = new THREE.PointerLockControls( camera );
+        if ( window.orientation ) {
+            controls = new THREE.DeviceOrientationControls( camera );
+        } else {
+            controls = new THREE.PointerLockControls( camera );
+            scene.add( controls.getObject() );
+            setupPointerLock();
+        }
 
-        scene.add(camera);
-        // For mobile device orientation controls
-        controls = new THREE.DeviceOrientationControls( camera );
-        // scene.add( controls.getObject() );
 
         // Render
         renderer = new THREE.WebGLRenderer({
