@@ -18,7 +18,6 @@
         movingObjects = {},
         ray,
 
-        vrstate = new vr.State(),
 
         defaultLightParams = {
             color: "ffffff",
@@ -36,8 +35,8 @@
         return angle * (Math.PI / 180);
     }
 
-    // Initialize VR.js
-    vr.load( function( error ) {
+    // Initialize our scene
+    window.onload = function( error ) {
         // if ( error ) {
         //     alert('Plugin load failed: ' + error.toString());
         // }
@@ -47,7 +46,7 @@
             controls.connect();
         }
         animate();
-    });
+    };
 
     function lightSource( params ) {
         var light = new THREE.DirectionalLight( parseInt( "0x" + params.color ), params.intensity )
@@ -209,25 +208,10 @@
                 effect.setInterpupillaryDistance(
                         effect.getInterpupillaryDistance() + 0.001);
                 break;
-
-            case 70: // f
-                if (!vr.isFullScreen()) {
-                    vr.enterFullScreen();
-                } else {
-                    vr.exitFullScreen();
-                }
-                e.preventDefault();
-                break;
-
-            case 32: // space
-                vr.resetHmdOrientation();
-                event.preventDefault();
-                break;
         }
     }
 
     function animate() {
-        // vr.requestAnimationFrame(animate);
         window.requestAnimationFrame( animate );
 
         // controls.isOnObject( false );
@@ -250,12 +234,10 @@
             scene.getObjectByName( objID ).rotation.z += toRad( curObj.spinsZ || 0 );
         }
 
-        // Poll VR, if it's ready.
-         var polled = vr.pollState(vrstate);
-        // controls.update( Date.now() - time, polled ? vrstate : null );
-
         controls.update();
         //renderer.render( scene, camera );
-        effect.render( scene, camera, polled ? vrstate : null );
+        // TODO: Removed VR polling in favor of device orientation
+        //       Fix a way to decide the third, false arguement here
+        effect.render( scene, camera, false );
     }
 })();

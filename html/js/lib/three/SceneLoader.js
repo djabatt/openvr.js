@@ -882,11 +882,11 @@ THREE.SceneLoader.prototype = {
 				geometry.name = geoID;
 				result.geometries[ geoID ] = geometry;
 
-			} else if ( geoJSON.type === "text" ) {
+			// } else if ( geoJSON.type === "text" ) {
 
-				geometry = new THREE.TextGeometry( geoJSON.text, geoJSON.parameters );
-				geometry.name = geoID;
-				result.geometries[ geoID ] = geometry;
+			// 	geometry = new THREE.TextGeometry( geoJSON.text, geoJSON.parameters );
+			// 	geometry.name = geoID;
+			// 	result.geometries[ geoID ] = geometry;
 
 			} else if ( geoJSON.type in this.geometryHandlers ) {
 
