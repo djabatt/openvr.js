@@ -1,45 +1,28 @@
 (function() {
 
     // Vars
-    var container,
-        camera,
-        scene,
-        renderer,
+    var container, camera,
+        scene, renderer,
 
-        geometry,
-        material,
-        mesh,
+        // Camera modifiers
+        controls, effect, // rift effect
 
-        controls,
-        time = Date.now(),
-
-        effect, // rift effect
-        objects = [],
         movingObjects = {},
-        ray,
-
-
-        defaultLightParams = {
-            color: "ffffff",
-            intensity: 1.5,
-            position: {
-                x: 1.5,
-                y: 1.5,
-                z: 1.5
-            }
-        };
+        ray;
 
     var editor = Editor;
     editor.setCallback( buildScene );
 
+    // Div wrapping the renderer's canvas
     container = document.getElementById( 'container' );
 
+    //***********************************************
+    // Events and Event Functions
+    //***********************************************
     // Initialize our scene
     window.onload = function( error ) {
-
         initObjects();
         animate();
-
     };
 
     document.addEventListener( 'webkitfullscreenchange', function( event ) {
@@ -53,6 +36,27 @@
         event.preventDefault();
         toggleControls();
     });
+
+
+
+    function onWindowResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+    }
+
+    function keyPressed (event) {
+        switch ( event.keyCode ) {
+            case 79: // o
+                effect.setInterpupillaryDistance(
+                        effect.getInterpupillaryDistance() - 0.001);
+                break;
+            case 80: // p
+                effect.setInterpupillaryDistance(
+                        effect.getInterpupillaryDistance() + 0.001);
+                break;
+        }
+    }
+
 
     function setControls() {
 
@@ -93,6 +97,34 @@
         }
     }
 
+
+
+    //******************************************
+    // Building and Running Scene
+    //******************************************
+
+    function initObjects() {
+        buildScene();
+
+        // Render
+        renderer = new THREE.WebGLRenderer({
+            devicePixelRatio: 1,
+            alpha: false,
+            autoUpdateObjects: true,
+            antialias: true
+        });
+
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        renderer.setClearColor( 0xffffff, 1 );
+        renderer.setViewport( 0, 0, window.innerWidth, window.innerHeight);
+        effect = new THREE.OculusRiftEffect( renderer );
+
+        container.appendChild( renderer.domElement );
+
+        // Attach necessary event listeners
+        window.addEventListener( 'resize', onWindowResize, false );
+        document.addEventListener( 'keydown', keyPressed, false );
+    }
 
     function buildScene() {
         // Clear objects and moving objects list
@@ -140,92 +172,8 @@
 
     }
 
-    function initObjects() {
-        buildScene();
-
-        // Render
-        renderer = new THREE.WebGLRenderer({
-            devicePixelRatio: 1,
-            alpha: false,
-            autoUpdateObjects: true,
-            antialias: true
-        });
-
-        renderer.setSize( window.innerWidth, window.innerHeight );
-        renderer.setClearColor( 0xffffff, 1 );
-        renderer.setViewport( 0, 0, window.innerWidth, window.innerHeight);
-        effect = new THREE.OculusRiftEffect( renderer );
-
-
-        // container.onclick = function() {
-        //     container.webkitRequestFullscreen();
-        // }
-
-        container.appendChild( renderer.domElement );
-
-        // Attach necessary event listeners
-        window.addEventListener( 'resize', onWindowResize, false );
-        document.addEventListener( 'keydown', keyPressed, false );
-    }
-
-    // function makeMotionMatrix( object ) {
-    //     var totalMatrix = new THREE.Matrix4().identity();
-    //     var tempMatrix = new THREE.Matrix4().identity();
-    //     if ( object.spins ) {
-    //         if (object.spins.x)
-    //             totalMatrix.multiply( tempMatrix.makeRotationX( toRad(parseInt(object.spins.x)) ) );
-    //         if (object.spins.y)
-    //             totalMatrix.multiply( tempMatrix.makeRotationY( toRad(parseInt(object.spins.y)) ) );
-    //         if (object.spins.z)
-    //             totalMatrix.multiply( tempMatrix.makeRotationZ( toRad(parseInt(object.spins.z)) ) );
-    //     }
-    //     if ( object.orbits ) {
-    //         totalMatrix.multiply( tempMatrix.makeTranslationX( parseInt(object.orbits.radius) ) );
-    //         if ( object.orbits.x )
-    //             totalMatrix.multiply( tempMatrix.makeRotationX( toRad( parseInt(object.orbits.x) ) ) );
-    //         if ( object.orbits.y )
-    //             totalMatrix.multiply( tempMatrix.makeRotationY( toRad( parseInt(object.orbits.y) ) ) );
-    //         if ( object.orbits.z )
-    //             totalMatrix.multiply( tempMatrix.makeRotationZ( toRad( parseInt(object.orbits.z) ) ) );
-    //     }
-    //     return totalMatrix;
-    // }
-
-    function onWindowResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-    }
-
-    function keyPressed (event) {
-        switch ( event.keyCode ) {
-            case 79: // o
-                effect.setInterpupillaryDistance(
-                        effect.getInterpupillaryDistance() - 0.001);
-                break;
-            case 80: // p
-                effect.setInterpupillaryDistance(
-                        effect.getInterpupillaryDistance() + 0.001);
-                break;
-        }
-    }
-
     function animate() {
         window.requestAnimationFrame( animate );
-
-        if (controls && controls.isOnObject) {
-            controls.isOnObject( false );
-
-            ray.ray.origin.copy( controls.getObject().position );
-            ray.ray.origin.y -= 10;
-
-            var intersections = ray.intersectObjects( objects );
-            if ( intersections.length > 0 ) {
-                var distance = intersections[ 0 ].distance;
-                if ( distance > 0 && distance < 10 ) {
-                    controls.isOnObject( true );
-                }
-            }
-        }
 
         for ( objID in movingObjects ) {
             var curObj = movingObjects[ objID ];
@@ -236,13 +184,16 @@
 
         if ( controls )
             controls.update();
-        //renderer.render( scene, camera );
         // TODO: Removed VR polling in favor of device orientation
         //       Fix a way to decide the third, false arguement here
         effect.render( scene, camera, false );
     }
 
+
+
+    //***************************************
     // Helper functions
+    //***************************************
     function toRad( angle ) {
         return angle * (Math.PI / 180);
     }

@@ -1,10 +1,46 @@
 var CssObjectLoader = (function () {
 
+  var inputData = {};
+  var objectHandlers = {};
+
+  // animations are for things like active spinning
   var animations = {};
+
   // rotations are for staticly rotated objects at start
   var rotations = {};
-  var objectHandlers = {};
   var cssGeometries = {}, cssMaterials = {}, cssObjects = {};
+
+
+  this.parseCss = function() {
+    $("#ovr-style").parsecss(function( result ) {
+      var uniqueInd = 0;
+      for ( objID in result ) {
+        curObj = result[ objID ];
+
+        var objectType = objID.split('#')[0].toLowerCase();
+
+        handleObject(objectType, curObj, uniqueInd);
+        if ( objectType == "light") uniqueInd++;
+
+        handleAnimations( curObj, uniqueInd );
+        handleRotations( curObj, uniqueInd );
+        uniqueInd++;
+      }
+
+    });
+    var retObj = {
+      objects: cssObjects,
+      geometries: cssGeometries,
+      materials: cssMaterials
+    };
+    return retObj;
+  };
+
+
+
+  //*************************************
+  // Getters
+  //*************************************
 
   this.getAnimations = function() {
     if ( animations!=={} )
@@ -50,30 +86,11 @@ var CssObjectLoader = (function () {
     return importObject;
   };
 
-  this.parseCss = function() {
-    $("#ovr-style").parsecss(function( result ) {
-      var uniqueInd = 0;
-      for ( objID in result ) {
-        curObj = result[ objID ];
 
-        var objectType = objID.split('#')[0].toLowerCase();
 
-        handleObject(objectType, curObj, uniqueInd);
-        if ( objectType == "light") uniqueInd++;
-
-        handleAnimations( curObj, uniqueInd );
-        handleRotations( curObj, uniqueInd );
-        uniqueInd++;
-      }
-
-    });
-    var retObj = {
-      objects: cssObjects,
-      geometries: cssGeometries,
-      materials: cssMaterials
-    };
-    return retObj;
-  };
+  //**************************************
+  // Batch handlers
+  //**************************************
 
   handleObject = function( objType, object, uniqueInd ) {
     objData = objectHandlers[objType]( object, uniqueInd );
@@ -168,6 +185,11 @@ var CssObjectLoader = (function () {
     }
     return objObj;
   }
+
+
+  //*****************************************
+  // Create handlers for support object types
+  //*****************************************
 
   objectHandlers["plane"] = handlePlane = function( object, uniqueInd ) {
     if (!object)
@@ -339,6 +361,12 @@ var CssObjectLoader = (function () {
 
     return { geometry: geoObj, material: matObj, object: objObj };
   }
+
+
+
+  //*********************************
+  // Helper Functions
+  //*********************************
 
   objectTag = function( uniqueInd ) {
     return "Object_" + uniqueInd;
