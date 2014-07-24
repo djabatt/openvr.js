@@ -47,14 +47,14 @@
 
     document.addEventListener( 'webkitfullscreenchange', function( event ) {
         if ( $('#container').hasClass('controlled') &&
-            document.webkitFullscreenElement ) {
-            console.log('toggleControls');
+            !document.webkitFullscreenElement ) {
             toggleControls();
         }
     }, false);
 
     $(".fullscreen").on('click', function() {
         event.preventDefault();
+        console.log("fs click");
         toggleControls();
     });
 
@@ -73,6 +73,7 @@
              element.requestPointerLock();
 
             controls = new THREE.PointerLockControls( camera );
+            controls.getObject().name = "PointerLockControls";
             controls.enabled = true;
             scene.add( controls.getObject() );
         }
@@ -81,8 +82,15 @@
     function toggleControls() {
 
         if( $('#container').hasClass('controlled') ) {
-            controls = undefined;
-            $('container').removeClass('controlled');
+            // Remove controls
+            if ( window.orientation ) {
+                controls = undefined;
+            } else {
+                var controlObject = scene.getObjectByName("PointerLockControls");
+                scene.remove( controlObject );
+            }
+            console.log("removing controlled");
+            $('#container').removeClass('controlled');
         } else {
             setControls();
             $('#container').addClass('controlled');
@@ -104,7 +112,6 @@
         rotatedObjects = CssObjectLoader.getRotations();
 
         var loader = new THREE.SceneLoader();
-        // var jScene = JSON.parse(localStorage.getItem('scene'));
         loader.parse(cssImportObject, function( e ) {
             scene = e.scene;
         }, '.');
@@ -134,15 +141,6 @@
         camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
 
         scene.add(camera);
-        // Init controls
-        // For laptop browser controls:
-        // controls = new THREE.PointerLockControls( camera );
-        if ( window.orientation ) {
-            controls = new THREE.DeviceOrientationControls( camera );
-        } else {
-            controls = new THREE.PointerLockControls( camera );
-            scene.add( controls.getObject() );
-        }
 
     }
 
