@@ -154,12 +154,12 @@
         renderer = new THREE.WebGLRenderer({
             devicePixelRatio: 1,
             alpha: false,
-            clearColor: 0xffffff,
             autoUpdateObjects: true,
             antialias: true
         });
 
         renderer.setSize( window.innerWidth, window.innerHeight );
+        renderer.setClearColor( 0xffffff, 1 );
         renderer.domElement.style.position = "absolute";
         renderer.domElement.style.top = 0;
         effect = new THREE.OculusRiftEffect( renderer );
