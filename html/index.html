@@ -32,8 +32,75 @@
 				margin: 0px;
 			}
 
+			.slideout-editor {
+				position: fixed;
+				top: 0;
+				left: -30%;
+				width: 30%;
+				height: 100%;
+				z-index: 20;
+				display: block;
+				background: #fff;
+				opacity: 0.8;
+			}
+			.slideout-editor h3 {
+				position: relative;
+				text-align: center;
+			}
+			.opener {
+				position: absolute;
+				top: 0;
+				left: 0;
+				cursor: pointer;
+				color: #fff;
+				background: #c0c0c0;
+				opacity: 0.7;
+				font-size: 25px;
+			}
+			#closer {
+				position: absolute;
+				right: 0;
+				color: #fff;
+				background: #c0c0c0;
+				font-size: 20px;
+				padding: 10px;
+				cursor: pointer;
+			}
+			#css {
+				margin: 0 auto;
+				width: 80%;
+				height: 60%;
+				display: block;
+				resize: none;
+				font-size: 18px;
+			}
+			#submit-css {
+				margin: 0 auto;
+				margin-top: 10px;
+				height: 5%;
+				width: 30%;
+				text-align: center;
+				font-size: 25px;
+				background: #c0c0c0;
+				cursor: pointer;
+			}
+			.hide {
+				display: none;
+			}
+			.fullscreen {
+				position: absolute;
+				right: 0;
+				top: 0;
+				cursor: pointer;
+				color: #fff;
+				background: #c0c0c0;
+				opacity: 0.7;
+				font-size: 25px;
+			}
+
+
 		</style>
-		<style id="ovr-style">
+		<style id="ovr-style" type="vrCss">
 			plane#1 {
 				width: 500;
 				height: 500;
@@ -129,9 +196,18 @@
 		</style>
 	</head>
 	<body>
+		<div class="slideout-editor">
+			<span class="slideout-toggle" id="closer">X</span>
+			<h3 class="slideout-toggle">CSS Editor</h3>
+			<textarea id="css" name="css"></textarea>
+			<div id="submit-css">Submit</div>
+		</div>
+		<span class="slideout-toggle opener">Edit</span>
+		<span class="fullscreen">Full Screen</span>
 		<div id="container"></div>
 		<script src="/js/lib/jquery/jquery-1.11.1.min.js"></script>
 		<script src="/js/lib/jquery/jquery.css-parser.js"></script>
+		<script src="/editor/editor.js"></script>
 		<script src="/js/lib/vr.js"></script>
 		<script src="/js/lib/three/three.js"></script>
 		<script src="/js/lib/three/three.box-geometry.js"></script>

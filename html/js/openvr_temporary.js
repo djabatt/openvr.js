@@ -30,11 +30,10 @@
             }
         };
 
+    var editor = Editor;
+    editor.setCallback( buildScene );
+
     container = document.getElementById( 'container' );
-    // Helper function
-    function toRad( angle ) {
-        return angle * (Math.PI / 180);
-    }
 
     // Initialize VR.js
     vr.load( function( error ) {
@@ -43,81 +42,58 @@
         // }
 
         initObjects();
-        if (controls.connect) {
+        if (controls && controls.connect) {
             controls.connect();
         }
         animate();
 
     });
 
-    function lightSource( params ) {
-        var light = new THREE.DirectionalLight( parseInt( "0x" + params.color ), params.intensity )
-        light.position.set(
-            params.position.x,
-            params.position.y,
-            params.position.z
-        );
-        return light;
-    }
+    $(".fullscreen").on('click', function() {
+        event.preventDefault();
+        toggleControls();
+    });
 
+    function setControls() {
 
-    var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
-
-    if ( havePointerLock ) {
-     var element = document.body;
-
-     var fullscreenchange = function ( event ) {
-         if (document.fullscreenElement === element ||
-                 document.mozFullscreenElement === element ||
-                 document.mozFullScreenElement === element) {
-             document.removeEventListener( 'fullscreenchange', fullscreenchange );
-             document.removeEventListener( 'mozfullscreenchange', fullscreenchange );
+        // For mobile device orientation controls
+        if ( window.orientation ) {
+            controls = new THREE.DeviceOrientationControls( camera );
+        // For laptop browser controls:
+        } else {
+            // TODO: Fix pointer Lock, idk why it won't actually request it...
+             var element = document.body;
+             element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
              element.requestPointerLock();
-         }
-     }
 
-     document.addEventListener( 'fullscreenchange', fullscreenchange, false );
-     document.addEventListener( 'mozfullscreenchange', fullscreenchange, false );
-
-     element.requestFullscreen = element.requestFullscreen || element.mozRequestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen;
-
-     var pointerlockchange = function ( event ) {
-         if (document.pointerLockElement === element ||
-                 document.mozPointerLockElement === element ||
-                 document.webkitPointerLockElement === element) {
-             controls.enabled = true;
-         } else {
-             controls.enabled = false;
-         }
-     }
-
-     var pointerlockerror = function ( event ) {
-     }
-
-     // Hook pointer lock state change events
-     document.addEventListener( 'pointerlockchange', pointerlockchange, false );
-     document.addEventListener( 'mozpointerlockchange', pointerlockchange, false );
-     document.addEventListener( 'webkitpointerlockchange', pointerlockchange, false );
-
-     document.addEventListener( 'pointerlockerror', pointerlockerror, false );
-     document.addEventListener( 'mozpointerlockerror', pointerlockerror, false );
-     document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
-
-     document.body.addEventListener( 'click', function ( event ) {
-         // Ask the browser to lock the pointer
-         element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
-         element.requestPointerLock();
-     }, false );
-    } else {
-     instructions.innerHTML = 'Your browser doesn\'t seem to support Pointer Lock API';
+            controls = new THREE.PointerLockControls( camera );
+            controls.enabled = true;
+            scene.add( controls.getObject() );
+        }
+        container.webkitRequestFullscreen();
     }
 
-    function initObjects() {
+    document.addEventListener( 'webkitfullscreenchange', function( event ) {
+        if ( $('#container').hasClass('controlled') ) {
+            console.log('toggleControls');
+            toggleControls();
+        }
+    }, false);
+
+    function toggleControls() {
+        if( $('#container').hasClass('controlled') ) {
+            controls = undefined;
+            $('container').removeClass('controlled');
+        } else {
+            setControls();
+            $('#container').addClass('controlled');
+        }
+    }
+
+
+    function buildScene() {
         // Clear objects and moving objects list
         objects = [];
-
-        // Init scene
-        scene = new THREE.Scene();
 
         // Light ray caster
         ray = new THREE.Raycaster();
@@ -158,22 +134,12 @@
         // Init camera
         camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
 
-        // Init controls
-        // For OculusRiftControls, this was broken due to plugins/drivers
-        // controls = new THREE.OculusRiftControls( camera );
-
         scene.add(camera);
-        // For mobile device orientation controls
-        if ( window.orientation ) {
-            controls = new THREE.DeviceOrientationControls( camera );
-        // For laptop browser controls:
-        } else {
-            controls = new THREE.PointerLockControls( camera );
-            scene.add( controls.getObject() );
-        }
+    }
 
+    function initObjects() {
+        buildScene();
 
-        var DPR = window.devicePixelRatio;
         // Render
         renderer = new THREE.WebGLRenderer({
             devicePixelRatio: 1,
@@ -188,9 +154,9 @@
         effect = new THREE.OculusRiftEffect( renderer );
 
 
-        container.onclick = function() {
-            container.webkitRequestFullscreen();
-        }
+        // container.onclick = function() {
+        //     container.webkitRequestFullscreen();
+        // }
 
         container.appendChild( renderer.domElement );
 
@@ -219,9 +185,10 @@
                 if (!vr.isFullScreen()) {
                     vr.enterFullScreen();
                 } else {
+                    toggleControls();
                     vr.exitFullScreen();
                 }
-                e.preventDefault();
+                event.preventDefault();
                 break;
 
             case 32: // space
@@ -235,7 +202,7 @@
         // vr.requestAnimationFrame(animate);
         window.requestAnimationFrame( animate );
 
-        if (controls.isOnObject) {
+        if (controls && controls.isOnObject) {
             controls.isOnObject( false );
 
             ray.ray.origin.copy( controls.getObject().position );
@@ -261,8 +228,23 @@
          var polled = vr.pollState(vrstate);
         // controls.update( Date.now() - time, polled ? vrstate : null );
 
-        controls.update();
+        if ( controls )
+            controls.update();
         //renderer.render( scene, camera );
         effect.render( scene, camera, polled ? vrstate : null );
+    }
+
+    // Helper functions
+    function toRad( angle ) {
+        return angle * (Math.PI / 180);
+    }
+    function lightSource( params ) {
+        var light = new THREE.DirectionalLight( parseInt( "0x" + params.color ), params.intensity )
+        light.position.set(
+            params.position.x,
+            params.position.y,
+            params.position.z
+        );
+        return light;
     }
 })();

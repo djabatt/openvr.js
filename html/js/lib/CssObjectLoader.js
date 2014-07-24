@@ -52,6 +52,7 @@ var CssObjectLoader = (function () {
 
   this.parseCss = function() {
     $("#ovr-style").parsecss(function( result ) {
+      console.log(result);
       var uniqueInd = 0;
       for ( objID in result ) {
         curObj = result[ objID ];
