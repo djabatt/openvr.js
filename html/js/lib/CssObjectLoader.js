@@ -1,12 +1,20 @@
 var CssObjectLoader = (function () {
 
   var animations = {};
+  // rotations are for staticly rotated objects at start
+  var rotations = {};
   var objectHandlers = {};
   var cssGeometries = {}, cssMaterials = {}, cssObjects = {};
 
   this.getAnimations = function() {
     if ( animations!=={} )
       return animations;
+
+    return undefined;
+  }
+  this.getRotations = function() {
+    if ( rotations !== {} )
+      return rotations;
 
     return undefined;
   }
@@ -44,6 +52,7 @@ var CssObjectLoader = (function () {
 
   this.parseCss = function() {
     $("#ovr-style").parsecss(function( result ) {
+      console.log(result);
       var uniqueInd = 0;
       for ( objID in result ) {
         curObj = result[ objID ];
@@ -54,6 +63,7 @@ var CssObjectLoader = (function () {
         if ( objectType == "light") uniqueInd++;
 
         handleAnimations( curObj, uniqueInd );
+        handleRotations( curObj, uniqueInd );
         uniqueInd++;
       }
 
@@ -75,7 +85,7 @@ var CssObjectLoader = (function () {
   // TODO: allow for more material options, etc
 
   handleAnimations = function( object, uniqueInd ) {
-    var animObj = {}
+    var animObj = {};
     if (object.spinsX)
       animObj.spinsX = object.spinsX;
     if ( object.spinsY )
@@ -84,6 +94,21 @@ var CssObjectLoader = (function () {
       animObj.spinsZ = object.spinsZ;
     if ( animObj !== {} )
       animations[ objectTag(uniqueInd) ] = animObj;
+  }
+
+  handleRotations = function( object, uniqueInd ) {
+    var rotObj = {};
+    if ( object.rotateX ) {
+      rotObj.rotateX = object.rotateX
+    }
+    if ( object.rotateY ) {
+      rotObj.rotateY = object.rotateY
+    }
+    if ( object.rotateZ ) {
+      rotObj.rotateZ = object.rotateZ
+    }
+    if ( rotObj !== {} )
+      rotations[ objectTag(uniqueInd) ] = rotObj;
   }
 
   objectHandlers["light"] = handleLight = function( object, uniqueInd ) {
@@ -115,9 +140,9 @@ var CssObjectLoader = (function () {
 
   };
 
-  basicMaterial = function( color ) {
+  basicMaterial = function( color, materialType ) {
     return {
-      type: "MeshLambertMaterial",
+      type: materialType || "MeshLambertMaterial",
       parameters: {
         color: parseInt((color || "#ffffff").replace("#", "0x")),
         ambient: parseInt("0xffffff"),
@@ -134,7 +159,7 @@ var CssObjectLoader = (function () {
   threeObject = function( object, geoID, materialID ) {
     var objObj = {
       position: [ object.x || 0, object.y || 0, object.z || 0 ],
-      rotation: [ object.rotateX || 0, object.rotateY || 0, object.rotateZ || 0 ],
+      rotation: [ 0, 0, 0 ],
       scale: [ object.scaleX || 1, object.scaleY || 1, object.scaleZ || 1 ],
       visible: true
     };
@@ -157,7 +182,7 @@ var CssObjectLoader = (function () {
       heightSegments: object.heightSegments || 1
     };
 
-    var matObj = basicMaterial( object.color );
+    var matObj = basicMaterial( object.color, "MeshBasicMaterial" );
     var objObj = threeObject( object, uniqueInd, uniqueInd );
 
     cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;
