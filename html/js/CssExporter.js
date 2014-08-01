@@ -37,13 +37,17 @@ CssExporter.prototype = {
 				} else if ( node instanceof THREE.Camera ) {
 					var rulesArray = CameraRules ( node );
 
+				} else {
+					// TODO: support other types of objects
+					continue;
 				}
 				var selector = node.name.replace("_", '#');
-				console.log(RuleSetString( selector, rulesArray ));
+				return RuleSetString( selector, rulesArray );
 			}
 
 		}
 
+		console.log(scene);
 		createRuleList( scene );
 
 		// Object Rule Functions
@@ -378,7 +382,7 @@ CssExporter.prototype = {
 			return  "color: #" + color;
 		}
 		function RuleSetString ( selector, rulesArray ) {
-			var output = selector + " {\n\n\t";
+			var output = selector + " {\n\t";
 			for ( var i = 0; i < rulesArray.length; i++ ) {
 				output += RuleString( rulesArray[i] );
 			}
@@ -386,7 +390,7 @@ CssExporter.prototype = {
 			return output;
 		}
 		function RuleString( rule ) {
-			return ( "  " + rule + ";\n\n\t" );
+			return ( "  " + rule + ";\n\t" );
 		}
 
 	}
