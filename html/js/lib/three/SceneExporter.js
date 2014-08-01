@@ -371,25 +371,25 @@ THREE.SceneExporter.prototype = {
 
 				'\t' + LabelString( getGeometryName( g ) ) + ': {',
 				'	"type"    : "sphere",',
-				'	"radius"  : ' 		 + g.radius + ',',
-				'	"widthSegments"  : ' + g.widthSegments + ',',
-				'	"heightSegments" : ' + g.heightSegments,
+				'	"radius"  : ' 		 + g.parameters.radius + ',',
+				'	"widthSegments"  : ' + g.parameters.widthSegments + ',',
+				'	"heightSegments" : ' + g.parameters.heightSegments,
 				'}'
 
 				];
 
 			} else if ( g instanceof THREE.BoxGeometry ) {
-
+				console.log(g);
 				var output = [
 
 				'\t' + LabelString( getGeometryName( g ) ) + ': {',
 				'	"type"    : "cube",',
-				'	"width"  : '  + g.width  + ',',
-				'	"height"  : ' + g.height + ',',
-				'	"depth"  : '  + g.depth  + ',',
-				'	"widthSegments"  : ' + g.widthSegments + ',',
-				'	"heightSegments" : ' + g.heightSegments + ',',
-				'	"depthSegments" : '  + g.depthSegments,
+				'	"width"  : '  + g.parameters.width  + ',',
+				'	"height"  : ' + g.parameters.height + ',',
+				'	"depth"  : '  + g.parameters.depth  + ',',
+				'	"widthSegments"  : ' + g.parameters.widthSegments + ',',
+				'	"heightSegments" : ' + g.parameters.heightSegments + ',',
+				'	"depthSegments" : '  + g.parameters.depthSegments,
 				'}'
 
 				];
@@ -400,10 +400,10 @@ THREE.SceneExporter.prototype = {
 
 				'\t' + LabelString( getGeometryName( g ) ) + ': {',
 				'	"type"    : "plane",',
-				'	"width"  : '  + g.width  + ',',
-				'	"height"  : ' + g.height + ',',
-				'	"widthSegments"  : ' + g.widthSegments + ',',
-				'	"heightSegments" : ' + g.heightSegments,
+				'	"width"  : '  + g.parameters.width  + ',',
+				'	"height"  : ' + g.parameters.height + ',',
+				'	"widthSegments"  : ' + g.parameters.widthSegments + ',',
+				'	"heightSegments" : ' + g.parameters.heightSegments,
 				'}'
 
 				];
@@ -417,7 +417,7 @@ THREE.SceneExporter.prototype = {
 				' "radiusTop"  : ' + g.parameters.radiusTop + ',',
 				' "radiusBottom"  : ' + g.parameters.radiusBottom + ',',
 				' "height"  : ' + g.parameters.height + ',',
-				' "radiusSegments"  : ' + g.parameters.radiusSegments + ',',
+				' "radialSegments"  : ' + g.parameters.radialSegments + ',',
 				' "heightSegments"  : ' + g.parameters.heightSegments + ',',
 				' "openEnded"  : ' + ( g.parameters.openEnded || 0 ),
 				'}'
@@ -458,11 +458,11 @@ THREE.SceneExporter.prototype = {
 
 				'\t' + LabelString( getGeometryName( g ) ) + ': {',
 				' "type"    : "torus",',
-				' "radius"  : ' + g.radius + ',',
-				' "tube"  : ' + g.tube + ',',
-				' "radialSegments"  : ' + g.radialSegments + ',',
-				' "tubularSegments"  : ' + g.tubularSegments + ',',
-				' "arc"  : ' + g.arc,
+				' "radius"  : ' + g.parameters.radius + ',',
+				' "tube"  : ' + g.parameters.tube + ',',
+				' "radialSegments"  : ' + g.parameters.radialSegments + ',',
+				' "tubularSegments"  : ' + g.parameters.tubularSegments + ',',
+				' "arc"  : ' + g.parameters.arc,
 				'}'
 
 				];
@@ -473,13 +473,13 @@ THREE.SceneExporter.prototype = {
 
 				'\t' + LabelString( getGeometryName( g ) ) + ': {',
 				' "type"    : "torusknot",',
-				' "radius"  : ' + g.radius + ',',
-				' "tube"  : ' + g.tube + ',',
-				' "radialSegments"  : ' + g.radialSegments + ',',
-				' "tubularSegments"  : ' + g.tubularSegments + ',',
-				' "p"  : ' + g.p + ',',
-				' "q"  : ' + g.q + ',',
-				' "heightScale"  : ' + g.heightScale,
+				' "radius"  : ' + g.parameters.radius + ',',
+				' "tube"  : ' + g.parameters.tube + ',',
+				' "radialSegments"  : ' + g.parameters.radialSegments + ',',
+				' "tubularSegments"  : ' + g.parameters.tubularSegments + ',',
+				' "p"  : ' + g.parameters.p + ',',
+				' "q"  : ' + g.parameters.q + ',',
+				' "heightScale"  : ' + g.parameters.heightScale,
 				'}'
 
 				];
@@ -839,7 +839,7 @@ THREE.SceneExporter.prototype = {
 			'	}',
 			'}'
 		].join( '\n' );
-
+		console.log(output);
 		return JSON.parse( output );
 
 	}

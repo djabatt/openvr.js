@@ -10,6 +10,12 @@ var CssObjectLoader = (function () {
   var rotations = {};
   var cssGeometries = {}, cssMaterials = {}, cssObjects = {};
 
+  // Preset data
+  var lightTypes = {
+    ambient: "AmbientLight", directional: "DirectionalLight",
+    hemisphere: "HemisphereLight", point: "PointLight", spot: "SpotLight"
+  };
+
 
   this.parseCss = function() {
     $("#ovr-style").parsecss(function( result ) {
@@ -19,11 +25,12 @@ var CssObjectLoader = (function () {
 
         var objectType = objID.split('#')[0].toLowerCase();
 
-        handleObject(objectType, curObj, uniqueInd);
-        if ( objectType == "light") uniqueInd++;
+        handleObject(objectType, curObj, uniqueInd, objectType);
+        if ( objectType == "DirectionalLight" || objectType == "SpotLight")
+          uniqueInd++;
 
-        handleAnimations( curObj, uniqueInd );
-        handleRotations( curObj, uniqueInd );
+        handleAnimations( curObj, uniqueInd, objectType );
+        handleRotations( curObj, uniqueInd, objectType );
         uniqueInd++;
       }
 

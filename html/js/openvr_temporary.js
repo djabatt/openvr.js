@@ -144,6 +144,9 @@
             scene = e.scene;
         }, '.');
 
+        var cssEx = new CssExporter();
+        cssEx.parse( scene );
+
         // Apply initial static rotations
         for ( objID in rotatedObjects ) {
             var currentObj = scene.getObjectByName( objID );
