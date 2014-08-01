@@ -15,6 +15,20 @@ var CssObjectLoader = (function () {
     ambient: "AmbientLight", directional: "DirectionalLight",
     hemisphere: "HemisphereLight", point: "PointLight", spot: "SpotLight"
   };
+  var ValidTypes = {
+    ambientlight: true, directionallight: true, hemispherelight: true,
+    pointlight: true, spotlight: true, meshbasicmaterial: true,
+    meshlambertmaterial: true, plane: true, sphere: true,
+    cube: true, box: true, cylinder: true, tetrahedron: true,
+    ring: true, torus: true, torusknot: true
+  };
+  // Map to be sure that object of type and ID doesn't already exist
+  // Example: cubegeometry#1 {(rules)} ... cubegeometry#1 {(diffrules)}
+  // Set objectType[type][ID] = true on creation of new object
+  var objectTypeMap = {};
+  for ( type in ValidTypes ) {
+    objectTypeMap[type] = {};
+  }
 
 
   this.parseCss = function() {
@@ -24,13 +38,20 @@ var CssObjectLoader = (function () {
         curObj = result[ objID ];
 
         var objectType = objID.split('#')[0].toLowerCase();
+        var objectTypeID = objID.split('#')[1];
+        // Be sure it's a valid type
+        if ( !ValidTypes[objectType] ) continue;
+        // Be sure ID of this type doesn't already exist
+        while ( objectTypeMap[objectType][objectTypeID] ) {
+          objectTypeID += 1;
+        }
 
-        handleObject(objectType, curObj, uniqueInd, objectType);
+        handleObject(objectType, curObj, uniqueInd, objectTypeID);
         if ( objectType == "light" )
           uniqueInd++;
 
-        handleAnimations( curObj, uniqueInd, objectType );
-        handleRotations( curObj, uniqueInd, objectType );
+        handleAnimations( curObj, objectType, objectTypeID );
+        handleRotations( curObj, objectType, objectTypeID );
         uniqueInd++;
       }
 
@@ -99,42 +120,43 @@ var CssObjectLoader = (function () {
   // Batch handlers
   //**************************************
 
-  handleObject = function( objType, object, uniqueInd ) {
-    objData = objectHandlers[objType]( object, uniqueInd, objType );
+  handleObject = function( objType, object, uniqueInd, objectTypeID ) {
+    objData = objectHandlers[objType]( object, uniqueInd, objectTypeID );
   }
 
   // Object models for all the types of objects in a Scene
   // TODO: Make each less static
   // TODO: allow for more material options, etc
 
-  handleAnimations = function( object, uniqueInd ) {
-    var animObj = {};
+  handleAnimations = function( object, objType, objectTypeID ) {
+    var animObj = undefined;
     if (object.spinsX)
-      animObj.spinsX = object.spinsX;
+      animObj= { spinsX: object.spinsX };
     if ( object.spinsY )
-      animObj.spinsY = object.spinsY;
+      animObj= { spinsY: object.spinsY };
     if ( object.spinsZ )
-      animObj.spinsZ = object.spinsZ;
-    if ( animObj !== {} )
-      animations[ objectTag(uniqueInd) ] = animObj;
+      animObj= { spinsZ: object.spinsZ };
+    if ( animObj != undefined )
+      animations[ objectTag(objectTypeID, objType) ] = animObj;
   }
 
-  handleRotations = function( object, uniqueInd ) {
-    var rotObj = {};
-    if ( object.rotateX ) {
-      rotObj.rotateX = object.rotateX
+  handleRotations = function( object, objType, objectTypeID ) {
+    var rotObj = undefined;
+    if ( object.rotateX !== undefined && object.rotateX !== 0 ) {
+      rotObj = { rotateX: object.rotateX }
     }
-    if ( object.rotateY ) {
-      rotObj.rotateY = object.rotateY
+    if ( object.rotateY !== undefined && object.rotateY !== 0 ) {
+      rotObj = { rotateY: object.rotateY }
     }
-    if ( object.rotateZ ) {
-      rotObj.rotateZ = object.rotateZ
+    if ( object.rotateZ !== undefined && object.rotateZ !== 0 ) {
+      rotObj = { rotateZ: object.rotateZ }
     }
-    if ( rotObj !== {} )
-      rotations[ objectTag(uniqueInd) ] = rotObj;
+    if ( rotObj != undefined ) {
+      rotations[ objectTag(objectTypeID, objType) ] = rotObj;
+    }
   }
 
-  objectHandlers["light"] = handleLight = function( object, uniqueInd ) {
+  objectHandlers["directionallight"] = handleLight = function( object, uniqueInd, objectTypeID ) {
     if ( !object )
       return;
 
@@ -150,12 +172,13 @@ var CssObjectLoader = (function () {
       color: parseInt((object.color || "#ffffff").replace("#", "0x")),
       intensity: object.intensity || 1.5,
       direction: [ object.x || 1, object.y || 1, object.z || 1 ],
-      target: "Object_" + ( uniqueInd + 1 )
+      target: "Target_" + ( uniqueInd + 1 )
     };
 
-    cssObjects[ objectTag(uniqueInd) ] = lightObj;
-    cssObjects[ objectTag(uniqueInd+1) ] = targetObj;
+    cssObjects[ objectTag(objectTypeID, "directionallight") ] = lightObj;
+    cssObjects[ objectTag(uniqueInd+1, "Target") ] = targetObj;
 
+    objectTypeMap['directionallight'][objectTypeID] = true;
     return {
       lightObj: lightObj,
       targetObj: targetObj
@@ -198,7 +221,7 @@ var CssObjectLoader = (function () {
   // Create handlers for support object types
   //*****************************************
 
-  objectHandlers["plane"] = handlePlane = function( object, uniqueInd ) {
+  objectHandlers["plane"] = handlePlane = function( object, uniqueInd, objectTypeID ) {
     if (!object)
       return
 
@@ -215,12 +238,14 @@ var CssObjectLoader = (function () {
 
     cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;
     cssMaterials[ materialTag( uniqueInd ) ] = matObj;
-    cssObjects[ objectTag( uniqueInd ) ] = objObj;
+    cssObjects[ objectTag( objectTypeID, 'plane' ) ] = objObj;
+
+    objectTypeMap['plane'][objectTypeID] = true;
 
     return { geometry: geoObj, material: matObj, object: objObj };
   }
 
-  objectHandlers["sphere"] = handleSphere = function( object, uniqueInd ) {
+  objectHandlers["sphere"] = handleSphere = function( object, uniqueInd, objectTypeID ) {
     if (!object)
       return;
 
@@ -234,12 +259,14 @@ var CssObjectLoader = (function () {
     var objObj = threeObject( object, uniqueInd, uniqueInd );
     cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;
     cssMaterials[ materialTag( uniqueInd ) ] = matObj;
-    cssObjects[ objectTag( uniqueInd ) ] = objObj;
+    cssObjects[ objectTag( objectTypeID, 'sphere' ) ] = objObj;
+
+    objectTypeMap['sphere'][objectTypeID] = true;
 
     return { geometry: geoObj, material: matObj, object: objObj };
   }
 
-  objectHandlers["cube"] = handleCube = function( object, uniqueInd ) {
+  objectHandlers["cube"] = objectHandlers["box"] = handleCube = function( object, uniqueInd, objectTypeID ) {
     if (!object) {
       return {};
     }
@@ -258,12 +285,14 @@ var CssObjectLoader = (function () {
 
     cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;
     cssMaterials[ materialTag( uniqueInd ) ] = matObj;
-    cssObjects[ objectTag( uniqueInd ) ] = objObj;
+    cssObjects[ objectTag( objectTypeID, 'box' ) ] = objObj;
+
+    objectTypeMap['cube'][objectTypeID] = true;
 
     return { geometry: geoObj, material: matObj, object: objObj };
   }
 
-  objectHandlers["cylinder"] = handleCylinder = function( object, uniqueInd ) {
+  objectHandlers["cylinder"] = handleCylinder = function( object, uniqueInd, objectTypeID ) {
     if (!object)
       return;
     var geoObj = {
@@ -280,12 +309,15 @@ var CssObjectLoader = (function () {
 
     cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;
     cssMaterials[ materialTag( uniqueInd ) ] = matObj;
-    cssObjects[ objectTag( uniqueInd ) ] = objObj;
+    cssObjects[ objectTag( objectTypeID, 'cylinder' ) ] = objObj;
+
+    objectTypeMap['cylinder'][objectTypeID] = true;
+
 
     return { geometry: geoObj, material: matObj, object: objObj };
   }
 
-  objectHandlers["tetrahedron"] = handleTetrahedron = function( object, uniqueInd ) {
+  objectHandlers["tetrahedron"] = handleTetrahedron = function( object, uniqueInd, objectTypeID ) {
     if ( !object )
       return;
 
@@ -295,12 +327,14 @@ var CssObjectLoader = (function () {
 
     cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;
     cssMaterials[ materialTag( uniqueInd ) ] = matObj;
-    cssObjects[ objectTag( uniqueInd ) ] = objObj;
+    cssObjects[ objectTag( objectTypeID, 'tetrahedron' ) ] = objObj;
+
+    objectTypeMap['tetrahedron'][objectTypeID] = true;
 
     return { geometry: geoObj, material: matObj, object: objObj };
   }
 
-  objectHandlers["ring"] = handleRing = function( object, uniqueInd ) {
+  objectHandlers["ring"] = handleRing = function( object, uniqueInd, objectTypeID ) {
     if ( !object )
       return;
 
@@ -318,12 +352,14 @@ var CssObjectLoader = (function () {
 
     cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;
     cssMaterials[ materialTag( uniqueInd ) ] = matObj;
-    cssObjects[ objectTag( uniqueInd ) ] = objObj;
+    cssObjects[ objectTag( objectTypeID, 'ring' ) ] = objObj;
+
+    objectTypeMap['ring'][objectTypeID] = true;
 
     return { geometry: geoObj, material: matObj, object: objObj };
   }
 
-  objectHandlers["torus"] = handleTorus = function( object, uniqueInd ) {
+  objectHandlers["torus"] = handleTorus = function( object, uniqueInd, objectTypeID ) {
     if ( !object )
       return;
 
@@ -340,12 +376,14 @@ var CssObjectLoader = (function () {
 
     cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;
     cssMaterials[ materialTag( uniqueInd ) ] = matObj;
-    cssObjects[ objectTag( uniqueInd ) ] = objObj;
+    cssObjects[ objectTag( uniqueInd, 'torus' ) ] = objObj;
+
+    objectTypeMap['torus'][uniqueInd] = true;
 
     return { geometry: geoObj, material: matObj, object: objObj };
   }
 
-  objectHandlers["torusknot"] = handleTorusKnot = function( object, uniqueInd ) {
+  objectHandlers["torusknot"] = handleTorusKnot = function( object, uniqueInd, objectTypeID ) {
     if ( !object )
       return;
 
@@ -364,7 +402,9 @@ var CssObjectLoader = (function () {
 
     cssGeometries[ geometryTag( uniqueInd ) ] = geoObj;
     cssMaterials[ materialTag( uniqueInd ) ] = matObj;
-    cssObjects[ objectTag( uniqueInd ) ] = objObj;
+    cssObjects[ objectTag( objectTypeID, 'torusknot' ) ] = objObj;
+
+    objectTypeMap['torusknot'][objectTypeID] = true;
 
     return { geometry: geoObj, material: matObj, object: objObj };
   }
@@ -375,8 +415,9 @@ var CssObjectLoader = (function () {
   // Helper Functions
   //*********************************
 
-  objectTag = function( uniqueInd ) {
-    return "Object_" + uniqueInd;
+  objectTag = function( uniqueInd, objType ) {
+    objType = objType ? objType : 'Object';
+    return objType + "_" + uniqueInd;
   }
   materialTag = function( uniqueInd ) {
     return "Material_" + uniqueInd;
