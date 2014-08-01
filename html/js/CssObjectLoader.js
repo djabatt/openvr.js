@@ -26,7 +26,7 @@ var CssObjectLoader = (function () {
         var objectType = objID.split('#')[0].toLowerCase();
 
         handleObject(objectType, curObj, uniqueInd, objectType);
-        if ( objectType == "DirectionalLight" || objectType == "SpotLight")
+        if ( objectType == "light" )
           uniqueInd++;
 
         handleAnimations( curObj, uniqueInd, objectType );
@@ -100,7 +100,7 @@ var CssObjectLoader = (function () {
   //**************************************
 
   handleObject = function( objType, object, uniqueInd ) {
-    objData = objectHandlers[objType]( object, uniqueInd );
+    objData = objectHandlers[objType]( object, uniqueInd, objType );
   }
 
   // Object models for all the types of objects in a Scene
@@ -179,7 +179,7 @@ var CssObjectLoader = (function () {
     };
   };
 
-  threeObject = function( object, geoID, materialID ) {
+  threeObject = function( object, geoID, materialID, objType ) {
     var objObj = {
       position: [ object.x || 0, object.y || 0, object.z || 0 ],
       rotation: [ 0, 0, 0 ],
