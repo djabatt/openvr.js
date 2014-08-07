@@ -2,16 +2,17 @@
 
     // Vars
     var container, camera,
-        scene, renderer,
+        renderer,
 
         // Camera modifiers
         controls, effect, // rift effect
 
-        movingObjects = {},
-        ray;
+        movingObjects = {};
 
-    var editor = TextEditor;
-    editor.setCallback( buildScene );
+    var textEditor = TextEditor;
+    textEditor.setCallback( buildScene );
+    var sceneEditor = new SceneEditor();
+    var scene = sceneEditor.scene;
 
     // Div wrapping the renderer's canvas
     container = document.getElementById( 'container' );
@@ -75,7 +76,7 @@
             controls = new THREE.PointerLockControls( camera );
             controls.getObject().name = "PointerLockControls";
             controls.enabled = true;
-            scene.add( controls.getObject() );
+            sceneEditor.scene.add( controls.getObject() );
         }
     }
 
@@ -127,69 +128,33 @@
     }
 
     function buildScene() {
-        // Clear objects and moving objects list
-        objects = [];
-
-        // Light ray caster
-        ray = new THREE.Raycaster();
-        ray.ray.direction.set( 0, -1, 0 );
 
         // CSS Parsing -> Importable JSON
-        var cssImportObject = CssObjectLoader.getObjects();
-        movingObjects = CssObjectLoader.getAnimations();
-        rotatedObjects = CssObjectLoader.getRotations();
-
-        var loader = new THREE.SceneLoader();
-        loader.parse(cssImportObject, function( e ) {
-            scene = e.scene;
-        }, '.');
-
-        var cssEx = new CssExporter();
-        cssEx.parse( scene );
-
-        // Apply initial static rotations
-        for ( objID in rotatedObjects ) {
-            var currentObj = scene.getObjectByName( objID );
-            var currentRot = rotatedObjects[ objID ];
-            if ( currentRot.rotateX ) {
-                currentObj.geometry.applyMatrix(
-                    new THREE.Matrix4().makeRotationX( toRad( parseInt(currentRot.rotateX) ) )
-                );
-            }
-            if ( currentRot.rotateY ) {
-                currentObj.geometry.applyMatrix(
-                    new THREE.Matrix4().makeRotationY( toRad( parseInt(currentRot.rotateY) ) )
-                );
-            }
-            if ( currentRot.rotateZ ) {
-                currentObj.geometry.applyMatrix(
-                    new THREE.Matrix4().makeRotationZ( toRad( parseInt(currentRot.rotateZ) ) )
-                );
-            }
-        }
+        sceneEditor.setSceneFromCss();
+        sceneEditor.initRotations();
 
         // Init camera
         camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 1100 );
 
-        scene.add(camera);
+        sceneEditor.scene.add(camera);
 
     }
 
     function animate() {
         window.requestAnimationFrame( animate );
 
-        for ( objID in movingObjects ) {
-            var curObj = movingObjects[ objID ];
-            scene.getObjectByName( objID ).rotation.x += toRad( curObj.spinsX || 0 );
-            scene.getObjectByName( objID ).rotation.y += toRad( curObj.spinsY || 0 );
-            scene.getObjectByName( objID ).rotation.z += toRad( curObj.spinsZ || 0 );
+        for ( objID in sceneEditor.movingObjects ) {
+            var curObj = sceneEditor.movingObjects[ objID ];
+            sceneEditor.scene.getObjectByName( objID ).rotation.x += toRad( curObj.spinsX || 0 );
+            sceneEditor.scene.getObjectByName( objID ).rotation.y += toRad( curObj.spinsY || 0 );
+            sceneEditor.scene.getObjectByName( objID ).rotation.z += toRad( curObj.spinsZ || 0 );
         }
 
         if ( controls )
             controls.update();
         // TODO: Removed VR polling in favor of device orientation
         //       Fix a way to decide the third, false arguement here
-        effect.render( scene, camera, false );
+        effect.render( sceneEditor.scene, camera, false );
     }
 
 
