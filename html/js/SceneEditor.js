@@ -6,7 +6,6 @@
 
 var SceneEditor = function () {
   this.SceneLoader = new THREE.SceneLoader();
-  console.log(THREE.SceneLoader);
   this.CssExporter = new CssExporter();
   this.CssObjectLoader = CssObjectLoader;
 
@@ -32,6 +31,7 @@ var SceneEditor = function () {
     snapChanged: new Signal(),
     spaceChanged: new Signal(),
     rendererChanged: new Signal(),
+    effectChanged: new Signal(),
 
     sceneGraphChanged: new Signal(),
     cameraChanged: new Signal(),
@@ -93,6 +93,10 @@ SceneEditor.prototype = {
       scope.scene = e.scene;
     }, '.');
 
+    console.log( this.scene );
+    console.log('sceneGraphChanged Raising');
+    this.signals.sceneGraphChanged.Raise();
+
     this.setRotatedObjects( this.CssObjectLoader.getRotations() );
     this.setMovingObjects( this.CssObjectLoader.getAnimations() );
 
@@ -114,18 +118,23 @@ SceneEditor.prototype = {
           currentObj.geometry.applyMatrix(
               new THREE.Matrix4().makeRotationX( THREE.Math.degToRad( parseInt(currentRot.rotateX) ) )
           );
+          currentObj.geometry.verticesNeedUpdate = true;
       }
       if ( currentRot.rotateY ) {
           currentObj.geometry.applyMatrix(
               new THREE.Matrix4().makeRotationY( THREE.Math.degToRad( parseInt(currentRot.rotateY) ) )
           );
+          currentObj.geometry.verticesNeedUpdate = true;
       }
       if ( currentRot.rotateZ ) {
           currentObj.geometry.applyMatrix(
               new THREE.Matrix4().makeRotationZ( THREE.Math.degToRad( parseInt(currentRot.rotateZ) ) )
           );
+          currentObj.geometry.verticesNeedUpdate = true;
       }
     }
+    console.log('rotations init');
+    this.signals.sceneGraphChanged.Raise();
   },
 
   /****** Object management ******/
@@ -287,6 +296,16 @@ SceneEditor.prototype = {
 
     this.signals.objectSelected.Raise( object );
 
+  },
+
+  selectByName: function( name ) {
+    var scope = this;
+
+    this.scene.traverse( function( child ) {
+      if ( child.name === name ) {
+        scope.select( child );
+      }
+    });
   },
 
   deselect: function ( object ) {

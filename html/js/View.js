@@ -10,14 +10,13 @@ var View = function ( editor ) {
 	var container = document.getElementById("container");
 
 	var signals = editor.signals;
-	var scene = editor.scene;
 	var sceneHelpers = editor.sceneHelpers;
 
 	var objects = [];
 
 	// Helpers
 	var grid = new THREE.GridHelper( 500, 25 );
-	sceneHelpers.add( grid );
+	editor.sceneHelpers.add( grid );
 
 	var camera = new THREE.PerspectiveCamera( 50, 1, 1, 5000 );
 	camera.position.fromArray( [ 500, 250, 500 ] );
@@ -27,10 +26,9 @@ var View = function ( editor ) {
 	selectionBox.material.depthTest = false;
 	selectionBox.material.transparent = true;
 	selectionBox.visible = false;
-	sceneHelpers.add( selectionBox );
+	editor.sceneHelpers.add( selectionBox );
 
-	// TODO: Set a container for all of this, to enable the transform controls
-	var transformConrols = new THREE.transformConrols( camera, container );
+	var transformControls = new THREE.TransformControls( camera, container );
 	transformControls.addEventListener( 'change', function () {
 
 		controls.enabled = true;
@@ -48,7 +46,10 @@ var View = function ( editor ) {
 		}
 
 	} );
-	sceneHelpers.add( transformControls );
+	editor.sceneHelpers.add( transformControls );
+
+	// Effect
+	var oldEffectType = "None";
 
 	// fog
 	var oldFogType = "None";
@@ -115,7 +116,7 @@ var View = function ( editor ) {
 		document.removeEventListener( 'mouseup', onMouseUp );
 	};
 	var onDoubleClick = function( event ) {
-		var intersets = getIntersects( event, objects );
+		var intersects = getIntersects( event, objects );
 		if ( intersects.length > 0 && intersects[0].object === editor.selected ) {
 			controls.focus( editor.selected );
 		}
@@ -127,7 +128,7 @@ var View = function ( editor ) {
 	var controls = new THREE.EditorControls( camera, container );
 	controls.center.fromArray( new THREE.Vector3().fromArray( [ 0, 0, 0 ] ) );
 	controls.addEventListener( 'change', function() {
-		tranformControls.update();
+		transformControls.update();
 		editor.cameraChanged.Raise( camera );
 	});
 
@@ -145,6 +146,8 @@ var View = function ( editor ) {
 	// Scene changed events
 
 	editor.signals.sceneGraphChanged.AddListener( function() {
+		console.log('sceneGraphChanged heard');
+		console.log( editor.scene );
 		render();
 	});
 
@@ -166,7 +169,7 @@ var View = function ( editor ) {
 		render();
 	});
 
-	editor.signals.objectAdded.add( function( object ) {
+	editor.signals.objectAdded.AddListener( function( object ) {
 		var materialsNeedUpdate = false;
 		object.traverse( function( child ) {
 			if ( child instanceof THREE.Light ) materialsNeedUpdate = true;
@@ -175,7 +178,7 @@ var View = function ( editor ) {
 		if ( materialsNeedUpdate === true ) updateMaterials();
 	});
 
-	editor.signals.objectChanged.add( function( object ) {
+	editor.signals.objectChanged.AddListener( function( object ) {
 		transformControls.update();
 
 		if ( object !== camera ) {
@@ -188,6 +191,130 @@ var View = function ( editor ) {
 		}
 		render();
 	});
-	// TODO keep adding in these signals based on UI changes. Basically hookup the
-	// Transform and Editor controls to the SceneEditor for state changes.
+
+	editor.signals.helperAdded.AddListener( function( object ) {
+		objects.push( object.getObjectByName( 'picker' ) );
+	});
+
+	editor.signals.helperRemoved.AddListener( function( object ) {
+		objects.splice( objects.indexOf( object.getObjectByName( 'picker' ) ), 1);
+	});
+
+	editor.signals.materialChanged.AddListener( function( material ) {
+		render();
+	});
+
+	editor.signals.fogTypeChanged.AddListener( function( fogType ) {
+		if ( fogtype !== oldFogType ) {
+			if ( fogtype === "None" ) {
+				editor.scene.fog = null;
+			} else if ( fogType === "Fog" ) {
+				editor.scene.fog = new THREE.Fog( oldFogColor, oldFogNear, oldFogFar );
+			} else if ( fogType === "FogExp2" ) {
+				editor.scene.fog = new THREE.FogExp2( oldFogColor, oldFogDensity );
+			}
+			updateMaterials();
+			oldFogType = fogType;
+		}
+
+		render();
+	});
+
+	editor.signals.fogColorChanged.AddListener( function( fogColor ) {
+		oldFogColor = fogColor;
+		updateFog( editor.scene );
+		render();
+	});
+
+	editor.signals.fogParametersChanged.AddListener( function( fogObj ) {
+		oldFogNear = fogObj.near;
+		oldFogFar = fogObj.far;
+		oldFogDensity = fogObj.density;
+
+		updateFog( editor.scene );
+
+		render();
+	});
+
+	editor.signals.effectChanged.AddListener( function( effectType ) {
+		if ( effectType !== oldEffectType ) {
+			if ( effectType === "None" ) {
+				// TODO: Turn off the effects
+			} else if ( effectType === "OculusRift" ) {
+				// TODO: Turn on the effect
+			}
+			render();
+		}
+	});
+
+	editor.signals.windowResize.AddListener( function() {
+		camera.aspect = container.offsetWidth / container.offsetHeight;
+		camera.updateProjectionMatrix();
+
+		render.setSize( container.offsetWidth, container.offsetHeight );
+		render();
+
+	});
+
+	var clearColor, renderer;
+
+	renderer = new THREE.WebGLRenderer({ antialias: true });
+	renderer.autoClear = false;
+	renderer.autoUpdateScene = false;
+	renderer.setSize( container.offsetWidth, container.offsetHeight );
+	container.appendChild( renderer.domElement );
+
+	animate();
+
+	function updateMaterials() {
+		editor.scene.traverse( function( node ) {
+			if ( node.material ) {
+				node.material.needsUpdate = true;
+			}
+			if ( node.material instanceof THREE.MeshFaceMaterial ) {
+				for ( var i = 0; i < node.material.materials.length; i++ ) {
+					node.material.materials[ i ].needsUpdate = true;
+				}
+			}
+		});
+	}
+
+	function updateFog( root ) {
+
+		if ( root.fog ) {
+			root.fog.color.setHex( oldFogColor );
+			if ( root.fog.near !== undefined ) root.fog.near = oldFogNear;
+			if ( root.fog.far !== undefined ) root.fog.far = oldFogFar;
+			if ( root.fog.density !== undefined ) root.fog.density = oldFogDensity;
+		}
+	}
+
+	function animate() {
+		requestAnimationFrame( animate );
+
+		if ( THREE.AnimationHandler.animations.length > 0 ) {
+			THREE.AnimationHandler.update( 0.016 );
+			for ( var i = 0, l = editor.sceneHelpers.children.length; i < l; i ++ ) {
+				var helper = editor.sceneHelpers.children[ i ];
+				if ( helper instanceof THREE.SkeletonHelper ) {
+					helper.update();
+				}
+			}
+			render();
+		}
+	}
+
+	function render() {
+		editor.sceneHelpers.updateMatrixWorld();
+		editor.scene.updateMatrixWorld();
+
+		renderer.clear();
+		renderer.render( editor.scene, camera );
+		console.log('view render')
+
+		renderer.render( editor.sceneHelpers, camera );
+	}
+
+	return this;
+
 }

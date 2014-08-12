@@ -1,17 +1,18 @@
 var Signal = function()
 {
     this.m_Listeners = [];
+    this.active = true;
 };
 
 Signal.prototype = {
     Raise: function( data ) {
-
-        for( var index = 0; index < this.m_Listeners.length; ++index )
-        {
-            listener = this.m_Listeners[ index ];
-            listener( data );
+        if ( this.active ) {
+            for( var index = 0; index < this.m_Listeners.length; ++index )
+            {
+                listener = this.m_Listeners[ index ];
+                listener( data );
+            }
         }
-
     },
 
     AddListener: function( listener )

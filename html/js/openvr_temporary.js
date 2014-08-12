@@ -12,6 +12,7 @@
     var textEditor = TextEditor;
     textEditor.setCallback( buildScene );
     var sceneEditor = new SceneEditor();
+    var view;
     var scene = sceneEditor.scene;
 
     // Div wrapping the renderer's canvas
@@ -105,22 +106,25 @@
     //******************************************
 
     function initObjects() {
+        view = new View( sceneEditor );
+
+
         buildScene();
 
         // Render
-        renderer = new THREE.WebGLRenderer({
-            devicePixelRatio: 1,
-            alpha: false,
-            autoUpdateObjects: true,
-            antialias: true
-        });
+        // renderer = new THREE.WebGLRenderer({
+        //     devicePixelRatio: 1,
+        //     alpha: false,
+        //     autoUpdateObjects: true,
+        //     antialias: true
+        // });
 
-        renderer.setSize( window.innerWidth, window.innerHeight );
-        renderer.setClearColor( 0xffffff, 1 );
-        renderer.setViewport( 0, 0, window.innerWidth, window.innerHeight);
-        effect = new THREE.OculusRiftEffect( renderer );
+        // renderer.setSize( window.innerWidth, window.innerHeight );
+        // renderer.setClearColor( 0xffffff, 1 );
+        // renderer.setViewport( 0, 0, window.innerWidth, window.innerHeight);
+        // effect = new THREE.OculusRiftEffect( renderer );
+        // container.appendChild( renderer.domElement );
 
-        container.appendChild( renderer.domElement );
 
         // Attach necessary event listeners
         window.addEventListener( 'resize', onWindowResize, false );
@@ -154,7 +158,7 @@
             controls.update();
         // TODO: Removed VR polling in favor of device orientation
         //       Fix a way to decide the third, false arguement here
-        effect.render( sceneEditor.scene, camera, false );
+        // effect.render( sceneEditor.scene, camera, false );
     }
 
 
