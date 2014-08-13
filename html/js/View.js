@@ -19,7 +19,7 @@ var View = function ( editor ) {
 	editor.sceneHelpers.add( grid );
 
 	var camera = new THREE.PerspectiveCamera( 50, 1, 1, 5000 );
-	camera.position.fromArray( [ 500, 250, 500 ] );
+	camera.position.fromArray( [ 250, 125, 250 ] );
 	camera.lookAt( new THREE.Vector3().fromArray( [ 0, 0, 0 ] ) );
 
 	var selectionBox = new THREE.BoxHelper();
@@ -41,7 +41,7 @@ var View = function ( editor ) {
 
 		if ( editor.selected !== null ) {
 
-			signals.objectChanged.dispatch( editor.selected );
+			signals.objectChanged.Raise( editor.selected );
 
 		}
 
@@ -86,9 +86,8 @@ var View = function ( editor ) {
 
 		var rect = container.getBoundingClientRect();
 		var x = ( event.clientX - rect.left ) / rect.width;
-		var y = ( event.clintY - rect.top ) / rect.height;
+		var y = ( event.clientY - rect.top ) / rect.height;
 		onMouseDownPosition.set( x, y );
-
 		document.addEventListener( 'mouseup', onMouseUp, false );
 
 	}
@@ -97,6 +96,7 @@ var View = function ( editor ) {
 		var x = (event.clientX - rect.left) / rect.width;
 		var y = (event.clientY - rect.top) / rect.height;
 		onMouseUpPosition.set( x, y );
+
 
 		if ( onMouseDownPosition.distanceTo( onMouseUpPosition ) == 0 ) {
 			var intersects = getIntersects( event, objects );
@@ -129,7 +129,7 @@ var View = function ( editor ) {
 	controls.center.fromArray( new THREE.Vector3().fromArray( [ 0, 0, 0 ] ) );
 	controls.addEventListener( 'change', function() {
 		transformControls.update();
-		editor.cameraChanged.Raise( camera );
+		editor.signals.cameraChanged.Raise( camera );
 	});
 
 	// Transform control events
@@ -146,8 +146,6 @@ var View = function ( editor ) {
 	// Scene changed events
 
 	editor.signals.sceneGraphChanged.AddListener( function() {
-		console.log('sceneGraphChanged heard');
-		console.log( editor.scene );
 		render();
 	});
 
@@ -155,7 +153,6 @@ var View = function ( editor ) {
 
 		selectionBox.visible = false;
 		transformControls.detach();
-
 		if ( object !== null ) {
 			if ( object.geometry !== undefined && object instanceof THREE.Sprite === false ) {
 				selectionBox.update( object );
@@ -310,7 +307,6 @@ var View = function ( editor ) {
 
 		renderer.clear();
 		renderer.render( editor.scene, camera );
-		console.log('view render')
 
 		renderer.render( editor.sceneHelpers, camera );
 	}

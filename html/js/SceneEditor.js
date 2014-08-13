@@ -90,11 +90,11 @@ SceneEditor.prototype = {
 
     var cssImportObject = this.CssObjectLoader.getObjects();
     this.SceneLoader.parse( cssImportObject, function( e ) {
-      scope.scene = e.scene;
+      while( e.scene.children.length > 0 ) {
+        scope.addObject( e.scene.children[ 0 ] );
+      }
     }, '.');
 
-    console.log( this.scene );
-    console.log('sceneGraphChanged Raising');
     this.signals.sceneGraphChanged.Raise();
 
     this.setRotatedObjects( this.CssObjectLoader.getRotations() );
@@ -133,7 +133,6 @@ SceneEditor.prototype = {
           currentObj.geometry.verticesNeedUpdate = true;
       }
     }
-    console.log('rotations init');
     this.signals.sceneGraphChanged.Raise();
   },
 
@@ -152,8 +151,8 @@ SceneEditor.prototype = {
     } );
 
     this.scene.add( object );
-    this.signals.objectAdded.Raise();
-    this.signals.sceneGraphChanged.Raise( object );
+    this.signals.objectAdded.Raise( object );
+    this.signals.sceneGraphChanged.Raise();
 
   },
   setObjName: function( object, name ) {
@@ -179,7 +178,7 @@ SceneEditor.prototype = {
 
   addGeo: function( geo ) {
 
-    this.geometries[ geometry.name ] = geo;
+    this.geometries[ geo.name ] = geo;
 
   },
   setGeoName: function( geo, name ) {
@@ -190,9 +189,9 @@ SceneEditor.prototype = {
   },
 
   /****** Material management ******/
-  addMaterial: function( mat ) {
+  addMat: function( mat ) {
 
-    this.materials[ material.name ] = mat;
+    this.materials[ mat.name ] = mat;
 
   },
   setMaterialName: function( mat, name ) {
@@ -293,7 +292,6 @@ SceneEditor.prototype = {
   select: function ( object ) {
 
     this.selected = object;
-
     this.signals.objectSelected.Raise( object );
 
   },
