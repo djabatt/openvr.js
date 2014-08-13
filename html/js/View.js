@@ -183,7 +183,7 @@ var View = function ( editor ) {
 				selectionBox.update( object );
 			}
 			if ( editor.helpers[ object.id ] !== undefined ) {
-				editors.helpers[ object.id ].update();
+				editor.helpers[ object.id ].update();
 			}
 		}
 		render();
